@@ -1,0 +1,10 @@
+using System.ComponentModel.DataAnnotations;
+
+namespace ecomea.api.Entities ;
+public class BusinessType{
+    [Key]
+    public int ID {get;set;}
+    [MaxLength(20)]
+    public required string Name{get;set;}
+    public ICollection<Business> Businesses{ get;set;} = new List<Business>();
+}
