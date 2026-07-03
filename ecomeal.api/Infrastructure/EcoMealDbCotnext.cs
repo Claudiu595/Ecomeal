@@ -11,8 +11,8 @@ public class EcoMealDbContext : DbContext
     public DbSet<BusinessType> BusinessType {get;set;}
     public DbSet<PackageType> PackageType {get;set;}
     public DbSet<Business> Business{get;set;}
-
-
+    public DbSet<Order> Order{get;set;}
+    public DbSet<Patckage> Package{get;set;}
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

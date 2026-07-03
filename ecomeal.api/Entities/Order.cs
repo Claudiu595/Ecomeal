@@ -8,4 +8,5 @@ public class Order{
     public int UserID{get;set;}
     public int PackageID{get;set;}
     public required string Status{get;set;}
+    public required DateTime Date{get;set;}
 }
