@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "oRTRa9lnJhY=",
+  "dgSpecHash": "ASZUlkwuqMs=",
   "success": true,
-  "projectFilePath": "c:\\Users\\Admin\\Desktop\\ecomeal\\ecomeal.client\\ecomeal.client.csproj",
+  "projectFilePath": "C:\\Users\\Admin\\Desktop\\ecomeal\\ecomeal.client\\ecomeal.client.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Admin\\.nuget\\packages\\microsoft.aspnetcore.app.internal.assets\\10.0.9\\microsoft.aspnetcore.app.internal.assets.10.0.9.nupkg.sha512"
   ],

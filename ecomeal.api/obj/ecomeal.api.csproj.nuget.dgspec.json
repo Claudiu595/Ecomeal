@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\Users\\Admin\\Desktop\\ecomeal\\ecomeal.api\\ecomeal.api.csproj": {}
+    "C:\\Users\\Admin\\Desktop\\ecomeal\\ecomeal.api\\ecomeal.api.csproj": {}
   },
   "projects": {
-    "c:\\Users\\Admin\\Desktop\\ecomeal\\ecomeal.api\\ecomeal.api.csproj": {
+    "C:\\Users\\Admin\\Desktop\\ecomeal\\ecomeal.api\\ecomeal.api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\Admin\\Desktop\\ecomeal\\ecomeal.api\\ecomeal.api.csproj",
+        "projectUniqueName": "C:\\Users\\Admin\\Desktop\\ecomeal\\ecomeal.api\\ecomeal.api.csproj",
         "projectName": "ecomeal.api",
-        "projectPath": "c:\\Users\\Admin\\Desktop\\ecomeal\\ecomeal.api\\ecomeal.api.csproj",
+        "projectPath": "C:\\Users\\Admin\\Desktop\\ecomeal\\ecomeal.api\\ecomeal.api.csproj",
         "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\Admin\\Desktop\\ecomeal\\ecomeal.api\\obj\\",
+        "outputPath": "C:\\Users\\Admin\\Desktop\\ecomeal\\ecomeal.api\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config"

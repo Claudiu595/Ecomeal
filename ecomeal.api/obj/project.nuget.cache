@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "+IwQuoTRPyo=",
+  "dgSpecHash": "WDy4C1NcHbA=",
   "success": true,
-  "projectFilePath": "c:\\Users\\Admin\\Desktop\\ecomeal\\ecomeal.api\\ecomeal.api.csproj",
+  "projectFilePath": "C:\\Users\\Admin\\Desktop\\ecomeal\\ecomeal.api\\ecomeal.api.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Admin\\.nuget\\packages\\azure.core\\1.47.1\\azure.core.1.47.1.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\azure.identity\\1.14.2\\azure.identity.1.14.2.nupkg.sha512",
@@ -59,9 +59,9 @@
       "code": "NU1903",
       "level": "Warning",
       "message": "Package 'Microsoft.OpenApi' 2.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-v5pm-xwqc-g5wc",
-      "projectPath": "c:\\Users\\Admin\\Desktop\\ecomeal\\ecomeal.api\\ecomeal.api.csproj",
+      "projectPath": "C:\\Users\\Admin\\Desktop\\ecomeal\\ecomeal.api\\ecomeal.api.csproj",
       "warningLevel": 1,
-      "filePath": "c:\\Users\\Admin\\Desktop\\ecomeal\\ecomeal.api\\ecomeal.api.csproj",
+      "filePath": "C:\\Users\\Admin\\Desktop\\ecomeal\\ecomeal.api\\ecomeal.api.csproj",
       "libraryId": "Microsoft.OpenApi",
       "targetGraphs": [
         "net10.0"
