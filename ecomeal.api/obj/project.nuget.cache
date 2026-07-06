@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "gbADowXEpDA=",
+  "dgSpecHash": "+IwQuoTRPyo=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Admin\\Desktop\\ecomeal\\ecomeal.api\\ecomeal.api.csproj",
+  "projectFilePath": "c:\\Users\\Admin\\Desktop\\ecomeal\\ecomeal.api\\ecomeal.api.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Admin\\.nuget\\packages\\azure.core\\1.47.1\\azure.core.1.47.1.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\azure.identity\\1.14.2\\azure.identity.1.14.2.nupkg.sha512",
@@ -39,6 +39,7 @@
     "C:\\Users\\Admin\\.nuget\\packages\\microsoft.visualstudio.solutionpersistence\\1.0.52\\microsoft.visualstudio.solutionpersistence.1.0.52.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\mono.texttemplating\\3.0.0\\mono.texttemplating.3.0.0.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512",
+    "C:\\Users\\Admin\\.nuget\\packages\\swashbuckle.aspnetcore.swaggerui\\10.2.3\\swashbuckle.aspnetcore.swaggerui.10.2.3.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\system.clientmodel\\1.5.1\\system.clientmodel.1.5.1.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\system.codedom\\6.0.0\\system.codedom.6.0.0.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\system.composition\\9.0.0\\system.composition.9.0.0.nupkg.sha512",
@@ -58,9 +59,9 @@
       "code": "NU1903",
       "level": "Warning",
       "message": "Package 'Microsoft.OpenApi' 2.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-v5pm-xwqc-g5wc",
-      "projectPath": "C:\\Users\\Admin\\Desktop\\ecomeal\\ecomeal.api\\ecomeal.api.csproj",
+      "projectPath": "c:\\Users\\Admin\\Desktop\\ecomeal\\ecomeal.api\\ecomeal.api.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\Admin\\Desktop\\ecomeal\\ecomeal.api\\ecomeal.api.csproj",
+      "filePath": "c:\\Users\\Admin\\Desktop\\ecomeal\\ecomeal.api\\ecomeal.api.csproj",
       "libraryId": "Microsoft.OpenApi",
       "targetGraphs": [
         "net10.0"

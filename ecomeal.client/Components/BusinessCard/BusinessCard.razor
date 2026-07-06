@@ -1,0 +1,20 @@
+@namespace Ecomeal.Site.Components.BusinessCard
+
+<div class="card" style="width: 18rem; position: relative;">
+  <div class="card-body">
+    <h5 class="card-title">@Business.Name</h5>
+    <p class="card-text">@Business.Description</p>
+
+    <ul class="list-unstyled mb-4">
+      <li><strong>Address:</strong> @Business.Adress</li>
+      <li><strong>Contact:</strong> @Business.Contact</li>
+      <li><strong>Type:</strong> @Business.BusinessTypeName</li>
+    </ul>
+
+    <button class="btn btn-danger btn-sm"
+            style="position: absolute; bottom: 10px; right: 10px;"
+            @onclick="DeleteClick">
+      Delete
+    </button>
+  </div>
+</div>
