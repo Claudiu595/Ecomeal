@@ -3,6 +3,11 @@
 @using EcoMeal.Site.Models
 
     <h2>Adauga pachet</h2>
+    @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+    {
+        <div class="alert alert-danger">@ErrorMessage</div>
+    }
+
     <EditForm Model="PackageAddModel" OnValidSubmit="AddPackageToBusiness">
         <DataAnnotationsValidator/>
         <ValidationSummary/>
@@ -82,12 +87,25 @@
         }
     }
 
+    private string ErrorMessage { get; set; } = string.Empty;
+
     public async Task AddPackageToBusiness()
     {
+        ErrorMessage = string.Empty;
+
+        if (PackageAddModel.PackageTypeId <= 0)
+        {
+            ErrorMessage = "Selecteaza un tip de pachet.";
+            return;
+        }
+
         var success = await BusinessService.AddPackage(BusinessId, PackageAddModel);
         if (success)
         {
             NavigationManager.NavigateTo($"/business/{BusinessId}");
+            return;
         }
+
+        ErrorMessage = "Nu s-a putut salva pachetul. Verifica datele sau API-ul.";
     }
 }

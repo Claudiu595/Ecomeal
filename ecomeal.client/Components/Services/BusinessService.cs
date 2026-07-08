@@ -35,7 +35,17 @@ public class BusinessService
 
     public async Task<bool> AddPackage(int businessId, PackageAddModel package)
     {
-        var response = await _http.PostAsJsonAsync($"api/business/{businessId}/addPackage", package);
+        var payload = new
+        {
+            name = package.Name,
+            description = package.Description,
+            price = package.Price,
+            startPickup = package.StartPickup,
+            endPickup = package.EndPickup,
+            packageTypeId = package.PackageTypeId
+        };
+
+        var response = await _http.PostAsJsonAsync($"api/business/{businessId}/addPackage", payload);
         return response.IsSuccessStatusCode;
     }
 }
