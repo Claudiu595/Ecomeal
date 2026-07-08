@@ -1,6 +1,6 @@
 @page "/business/{BusinessId:int}/addPackage"
 @using Ecomeal.Site.Services
-
+@using EcoMeal.Site.Models
 
     <h2>Adauga pachet</h2>
     <EditForm Model="PackageAddModel" OnValidSubmit="AddPackageToBusiness">
@@ -38,12 +38,11 @@
     <label class="form-label">Tip pachet</label>
     <InputSelect @bind-Value="PackageAddModel.PackageTypeId"
                  class="form-control mb-2">
-        <option value="0"
-                disabled>Alege tipul...</option>
-        @* @foreach (var packageType in PackageTypes)
+        <option value="0" disabled>Alege tipul...</option>
+        @foreach (var packageType in PackageTypes)
         {
-            <option value="@packageType.Id">@packageType.Name</option>
-        } *@
+            <option value="@packageType.ID">@packageType.Name</option>
+        }
     </InputSelect>
     <button type="submit" class="btn btn-primary mt-3">Adaugă pachet</button>
 
@@ -54,8 +53,15 @@
 @code {
     [Parameter]
     public int BusinessId { get; set; }
+
     [Inject]
-    public BusinessService BusinessService { get; set; }
+    public required BusinessService BusinessService { get; set; }
+
+    [Inject]
+    public required NavigationManager NavigationManager { get; set; }
+
+    private List<PackageTypeModel> PackageTypes { get; set; } = new();
+
     public PackageAddModel PackageAddModel { get; set; } = new PackageAddModel()
         {
             Name = string.Empty,
@@ -63,12 +69,25 @@
             Price = 0,
             StartPickup = DateTime.Now,
             EndPickup = DateTime.Now.AddHours(2),
-            PackageTypeId = 1
+            PackageTypeId = 0
         };
+
+    protected override async Task OnInitializedAsync()
+    {
+        PackageTypes = await BusinessService.GetPackageTypesAsync(BusinessId);
+
+        if (PackageTypes.Any() && PackageAddModel.PackageTypeId == 0)
+        {
+            PackageAddModel.PackageTypeId = PackageTypes.First().ID;
+        }
+    }
 
     public async Task AddPackageToBusiness()
     {
-        await BusinessService.AddPackage(BusinessId, PackageAddModel);
-        
+        var success = await BusinessService.AddPackage(BusinessId, PackageAddModel);
+        if (success)
+        {
+            NavigationManager.NavigateTo($"/business/{BusinessId}");
+        }
     }
 }

@@ -22,5 +22,11 @@ public class EcoMealDbContext : DbContext
             .HasOne(p => p.BusinessType)
             .WithMany(p => p.Businesses)
             .HasForeignKey(p => p.BusinessTypeID);
+
+        modelBuilder.Entity<PackageType>().HasData(
+            new PackageType { ID = 1, Name = "Standard" },
+            new PackageType { ID = 2, Name = "Vegetarian" },
+            new PackageType { ID = 3, Name = "Premium" }
+        );
     }
 }

@@ -4,6 +4,7 @@ using EcoMeal.API.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ecomeal.api.Migrations
 {
     [DbContext(typeof(EcoMealDbContext))]
-    partial class EcoMealDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260708132601_SeedPackageTypes")]
+    partial class SeedPackageTypes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -154,23 +157,6 @@ namespace ecomeal.api.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("PackageType");
-
-                    b.HasData(
-                        new
-                        {
-                            ID = 1,
-                            Name = "Standard"
-                        },
-                        new
-                        {
-                            ID = 2,
-                            Name = "Vegetarian"
-                        },
-                        new
-                        {
-                            ID = 3,
-                            Name = "Premium"
-                        });
                 });
 
             modelBuilder.Entity("ecomea.api.Entities.User", b =>

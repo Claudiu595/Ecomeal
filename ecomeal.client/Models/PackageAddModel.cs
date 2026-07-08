@@ -8,7 +8,7 @@ public class PackageAddModel
     public required string Description { get; set; }
     [Required]
     [Range(0,1000)]
-    public double Price { get; set; }
+    public int Price { get; set; }
     [Required]
     public DateTime StartPickup { get; set; }
     [Required]

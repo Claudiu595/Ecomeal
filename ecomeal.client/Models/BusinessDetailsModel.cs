@@ -2,7 +2,7 @@ namespace EcoMeal.Site.Models;
 
 public class BusinessDetailsModel
 {
-    public int Id { get; set; }
+    public int ID { get; set; }
     public string Name { get; set; } = "";
     public string Adress { get; set; } = "";
     public string? Description { get; set; }

@@ -1,5 +1,6 @@
 using System.Data.SqlTypes;
 using Ecomeal.API.Models;
+using ecomea.api.Entities;
 using EcoMeal.API.Entities;
 using EcoMeal.API.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
@@ -47,8 +48,8 @@ public class BusinessController : ControllerBase
     }
 
 
-[HttpGet("{id}")]
-    public async Task<ActionResult<BusinessDetailsDTO>> GetOneById(int id)
+[HttpGet("{ID}")]
+    public async Task<ActionResult<BusinessDetailsDTO>> GetOneById(int ID)
     {
         var business = await _context.Business
             .Include(b => b.Packages)
@@ -61,7 +62,7 @@ public class BusinessController : ControllerBase
                 Contact = b.Contact,
                 BusinessTypeName = b.BusinessType.Name,
             })
-            .FirstOrDefaultAsync(b => b.ID == id);
+            .FirstOrDefaultAsync(b => b.ID == ID);
         if (business is null)
         {
             return NotFound();
@@ -69,12 +70,70 @@ public class BusinessController : ControllerBase
 
         return Ok(business);
     }
-    [HttpPost]
-    [Route("{id}/addPackage")]
-    public async Task<IActionResult> AddPackageToBusiness(int ID,[FromBody]PackageAddDTO package)
+    [HttpGet("{ID}/packageTypes")]
+    public async Task<ActionResult<IEnumerable<PackageType>>> GetPackageTypesForBusiness([FromRoute(Name = "ID")] int ID)
+    {
+        var business = await _context.Business
+            .Include(b => b.BusinessType)
+            .FirstOrDefaultAsync(b => b.ID == ID);
+
+        if (business is null)
+        {
+            return NotFound();
+        }
+
+        var packageTypes = GetPackageTypeOptionsForBusinessType(business.BusinessType.Name);
+        return Ok(packageTypes);
+    }
+
+    private static List<PackageType> GetPackageTypeOptionsForBusinessType(string businessTypeName)
+    {
+        var normalizedName = businessTypeName?.Trim().ToLowerInvariant() ?? string.Empty;
+
+        if (normalizedName.Contains("fast") || normalizedName.Contains("burger") || normalizedName.Contains("pizza"))
+        {
+            return
+            [
+                new PackageType { ID = 1, Name = "Pizza margherita" },
+                new PackageType { ID = 2, Name = "Pizza pepperoni" },
+                new PackageType { ID = 3, Name = "Pizza veggie" }
+            ];
+        }
+
+        if (normalizedName.Contains("patis") || normalizedName.Contains("cofet") || normalizedName.Contains("baker") || normalizedName.Contains("bakery"))
+        {
+            return
+            [
+                new PackageType { ID = 1, Name = "Pachet simplu" },
+                new PackageType { ID = 2, Name = "Pachet de dimineata" },
+                new PackageType { ID = 3, Name = "Pachet de post" }
+            ];
+        }
+
+        if (normalizedName.Contains("restaurant") || normalizedName.Contains("cafe") || normalizedName.Contains("bar") || normalizedName.Contains("grill"))
+        {
+            return
+            [
+                new PackageType { ID = 1, Name = "Menu de zi" },
+                new PackageType { ID = 2, Name = "Menu degustare" },
+                new PackageType { ID = 3, Name = "Menu premium" }
+            ];
+        }
+
+        return
+        [
+            new PackageType { ID = 1, Name = "Meniu local" },
+            new PackageType { ID = 2, Name = "Meniu vegetarian" },
+            new PackageType { ID = 3, Name = "Meniu premium" }
+        ];
+    }
+
+    [HttpPost("{ID}/addPackage")]
+    public async Task<IActionResult> AddPackageToBusiness([FromRoute(Name = "ID")] int ID,[FromBody]PackageAddDTO package)
     {
         _context.Package.Add(new Package
         {
+            Name = package.Name,
             Description = package.Description,
             Price = package.Price,
             StartPickUp = package.StartPickup,
@@ -84,6 +143,6 @@ public class BusinessController : ControllerBase
             NoPackage = 1
         });
         await _context.SaveChangesAsync();
-        return Ok();
+        return CreatedAtAction(nameof(GetOneById), new { ID }, new { message = "Package created successfully." });
     }
 }
