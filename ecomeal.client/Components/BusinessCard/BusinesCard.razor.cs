@@ -14,6 +14,8 @@ public partial class BusinessCard
 
     [Parameter]
     public EventCallback<int> OnDeleteRequested { get; set; }
+    [Inject]
+    public required NavigationManager NavigationManager { get; set; }
 
     private async Task DeleteClick()
     {
@@ -24,4 +26,9 @@ public partial class BusinessCard
             await OnDeleteRequested.InvokeAsync(Business.ID);
         }
     }
+    public void NavigateToDetails()
+    {
+        NavigationManager.NavigateTo($"/business/{Business.ID}");
+    }
+
 }

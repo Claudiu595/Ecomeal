@@ -1,79 +1,87 @@
 .page {
-    position: relative;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
+    background-color: #f8f9fa;
 }
 
-main {
+.main-content {
     flex: 1;
 }
 
-.sidebar {
-    background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
+.topbar ::deep .navbar {
+    background: linear-gradient(90deg, #35c022 0%, #c0c45b 100%);
+    padding: 0.85rem 0;
 }
 
-.top-row {
-    background-color: #f7f7f7;
-    border-bottom: 1px solid #d6d5d5;
-    justify-content: flex-end;
-    height: 3.5rem;
+.topbar ::deep .navbar-brand {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    color: #ffffff !important;
+}
+
+.topbar ::deep .nav-link {
+    color: #ffffff !important;
+}
+
+.topbar ::deep .nav-link:hover,
+.topbar ::deep .nav-link:focus {
+    color: #f2fff3 !important;
+}
+
+.topbar ::deep .brand-mark {
+    margin-right: 0.45rem;
+    font-size: 1.2rem;
+}
+
+.topbar ::deep form {
+    flex: 1;
+    justify-content: center;
+    display: flex;
+}
+
+.topbar ::deep .form-control {
+    min-width: 220px;
+    max-width: 480px;
+    width: 100%;
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+.topbar ::deep .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.topbar ::deep .nav-home-link {
     display: flex;
     align-items: center;
+    height: 38px;
+    margin-left: 0.75rem;
 }
 
-    .top-row ::deep a, .top-row ::deep .btn-link {
-        white-space: nowrap;
-        margin-left: 1.5rem;
-        text-decoration: none;
-    }
-
-    .top-row ::deep a:hover, .top-row ::deep .btn-link:hover {
-        text-decoration: underline;
-    }
-
-    .top-row ::deep a:first-child {
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-@media (max-width: 640.98px) {
-    .top-row {
-        justify-content: space-between;
-    }
-
-    .top-row ::deep a, .top-row ::deep .btn-link {
-        margin-left: 0;
-    }
+.topbar ::deep .nav-home-image {
+    display: block;
+    height: 100%;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+    border-radius: 0.375rem;
 }
 
-@media (min-width: 641px) {
-    .page {
-        flex-direction: row;
-    }
+.topbar ::deep .navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.45);
+}
 
-    .sidebar {
-        width: 250px;
-        height: 100vh;
-        position: sticky;
-        top: 0;
-    }
+.topbar ::deep .navbar-toggler-icon {
+    filter: brightness(0) invert(1);
+}
 
-    .top-row {
-        position: sticky;
-        top: 0;
-        z-index: 1;
-    }
-
-    .top-row.auth ::deep a:first-child {
-        flex: 1;
-        text-align: right;
-        width: 0;
-    }
-
-    .top-row, article {
-        padding-left: 2rem !important;
-        padding-right: 1.5rem !important;
-    }
+.content {
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
 #blazor-error-ui {

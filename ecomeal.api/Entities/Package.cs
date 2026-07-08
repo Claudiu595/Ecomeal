@@ -1,11 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace ecomea.api.Entities ;
- 
-public class Patckage
+namespace EcoMeal.API.Entities; 
+public class Package
 {
     [Key]
-    public required int ID{get;set;}
+    public int ID{get;set;}
     public required int NoPackage{get;set;}
     public required int BusinessID{get;set;}
     public required int PackageType{get;set;}

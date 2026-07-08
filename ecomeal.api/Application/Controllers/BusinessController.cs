@@ -1,5 +1,6 @@
 using System.Data.SqlTypes;
-using ecomea.api.Entities;
+using Ecomeal.API.Models;
+using EcoMeal.API.Entities;
 using EcoMeal.API.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -43,5 +44,46 @@ public class BusinessController : ControllerBase
         _context.Business.Remove(business);
         await _context.SaveChangesAsync();
         return NoContent();
+    }
+
+
+[HttpGet("{id}")]
+    public async Task<ActionResult<BusinessDetailsDTO>> GetOneById(int id)
+    {
+        var business = await _context.Business
+            .Include(b => b.Packages)
+            .Select(b => new BusinessDetailsDTO
+            {
+                ID = b.ID,
+                Name = b.Name,
+                Adress = b.Adress,
+                Description = b.Description,
+                Contact = b.Contact,
+                BusinessTypeName = b.BusinessType.Name,
+            })
+            .FirstOrDefaultAsync(b => b.ID == id);
+        if (business is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(business);
+    }
+    [HttpPost]
+    [Route("{id}/addPackage")]
+    public async Task<IActionResult> AddPackageToBusiness(int ID,[FromBody]PackageAddDTO package)
+    {
+        _context.Package.Add(new Package
+        {
+            Description = package.Description,
+            Price = package.Price,
+            StartPickUp = package.StartPickup,
+            EndPickUp = package.EndPickup,
+            PackageType = package.PackageTypeId,
+            BusinessID = ID,
+            NoPackage = 1
+        });
+        await _context.SaveChangesAsync();
+        return Ok();
     }
 }

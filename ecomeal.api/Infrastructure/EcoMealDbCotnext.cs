@@ -1,4 +1,5 @@
 using ecomea.api.Entities;
+using EcoMeal.API.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace EcoMeal.API.Infrastructure;
@@ -12,7 +13,7 @@ public class EcoMealDbContext : DbContext
     public DbSet<PackageType> PackageType {get;set;}
     public DbSet<Business> Business{get;set;}
     public DbSet<Order> Order{get;set;}
-    public DbSet<Patckage> Package{get;set;}
+    public DbSet<Package> Package{get;set;}
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

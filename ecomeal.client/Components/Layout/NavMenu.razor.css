@@ -1,3 +1,13 @@
+.navbar {
+    background: linear-gradient(90deg, #B9C253 0%, #5CB85C 100%);
+    min-height: 3.5rem;
+}
+
+.navbar-brand,
+.navbar .nav-link {
+    color: #f8fff8 !important;
+}
+
 .navbar-toggler {
     appearance: none;
     cursor: pointer;
@@ -71,6 +81,39 @@
         width: 100%;
     }
 
+.nav-home-link {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    min-height: 3.5rem;
+    padding: 0 0.35rem;
+    cursor: default;
+    pointer-events: none;
+    background: transparent;
+}
+
+.nav-home-image {
+    height: 3.5rem;
+    width: auto;
+    max-height: 3.5rem;
+    max-width: 100%;
+    object-fit: contain;
+    display: block;
+    user-select: none;
+    -webkit-user-drag: none;
+    pointer-events: none;
+    box-shadow: none;
+    filter: none;
+}
+
+.nav-home-link:hover,
+.nav-home-link:focus,
+.nav-home-link:active {
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
 .nav-item ::deep a.active {
     background-color: rgba(255,255,255,0.37);
     color: white;
@@ -95,10 +138,9 @@
     }
 
     .nav-scrollable {
-        /* Never collapse the sidebar for wide screens */
+        
         display: block;
 
-        /* Allow sidebar to scroll for tall menus */
         height: calc(100vh - 3.5rem);
         overflow-y: auto;
     }

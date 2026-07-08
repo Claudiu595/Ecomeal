@@ -1,3 +1,13 @@
+.navbar[b-0riiyqct7g] {
+    background: linear-gradient(90deg, #B9C253 0%, #5CB85C 100%);
+    min-height: 3.5rem;
+}
+
+.navbar-brand[b-0riiyqct7g],
+.navbar .nav-link[b-0riiyqct7g] {
+    color: #f8fff8 !important;
+}
+
 .navbar-toggler[b-0riiyqct7g] {
     appearance: none;
     cursor: pointer;
@@ -71,6 +81,39 @@
         width: 100%;
     }
 
+.nav-home-link[b-0riiyqct7g] {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    min-height: 3.5rem;
+    padding: 0 0.35rem;
+    cursor: default;
+    pointer-events: none;
+    background: transparent;
+}
+
+.nav-home-image[b-0riiyqct7g] {
+    height: 3.5rem;
+    width: auto;
+    max-height: 3.5rem;
+    max-width: 100%;
+    object-fit: contain;
+    display: block;
+    user-select: none;
+    -webkit-user-drag: none;
+    pointer-events: none;
+    box-shadow: none;
+    filter: none;
+}
+
+.nav-home-link:hover[b-0riiyqct7g],
+.nav-home-link:focus[b-0riiyqct7g],
+.nav-home-link:active[b-0riiyqct7g] {
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
 .nav-item[b-0riiyqct7g]  a.active {
     background-color: rgba(255,255,255,0.37);
     color: white;
@@ -95,10 +138,9 @@
     }
 
     .nav-scrollable[b-0riiyqct7g] {
-        /* Never collapse the sidebar for wide screens */
+        
         display: block;
 
-        /* Allow sidebar to scroll for tall menus */
         height: calc(100vh - 3.5rem);
         overflow-y: auto;
     }

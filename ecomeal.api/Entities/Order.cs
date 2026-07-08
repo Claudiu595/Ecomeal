@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace ecomea.api.Entities ;
+namespace EcoMeal.API.Entities ;
 public class Order{
     [Key]
     public int ID {get;set;}

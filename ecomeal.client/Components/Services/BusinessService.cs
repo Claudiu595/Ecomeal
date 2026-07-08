@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using Ecomeal.Site.Models;
+using EcoMeal.Site.Models;
 
 namespace Ecomeal.Site.Services;
 public class BusinessService
@@ -20,5 +21,14 @@ public class BusinessService
     {
         var response = await _http.DeleteAsync($"api/business/{id}");
         return response.IsSuccessStatusCode;
+    }
+    public async Task<BusinessDetailsModel?> GetById(int id)
+    {
+        var business = await _http.GetFromJsonAsync<BusinessDetailsModel>($"api/business/{id}");
+        return business;
+    }
+    public async Task AddPackage(int businessId, PackageAddModel package)
+    {
+        await _http.PostAsJsonAsync($"api/business/{businessId}/AddPackage", package);
     }
 }

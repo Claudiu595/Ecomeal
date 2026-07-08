@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-
-namespace ecomea.api.Entities ;
+namespace EcoMeal.API.Entities;
 public class Business{
     [Key]
     public int ID {get;set;}
@@ -11,4 +10,5 @@ public class Business{
     public required string Contact {get;set;}
     public int BusinessTypeID{get;set;}
     public required BusinessType BusinessType{get;set;}
+    public required ICollection<Package> Packages{get;set;}
 }
