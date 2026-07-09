@@ -1,19 +1,18 @@
-using System.ComponentModel.DataAnnotations;
-
-namespace EcoMeal.API.Entities; 
-public class Package
+namespace EcoMeal.Api.Entities
 {
-    [Key]
-    public int ID{get;set;}
-    public required int NoPackage{get;set;}
-    public required int BusinessID{get;set;}
-    public Business? Business{get;set;}
-    public required int PackageTypeID{get;set;}
-    public EcoMeal.API.Entities.PackageType? PackageType{get;set;}
-    public string Name { get; set; } = string.Empty;
-    public string? Description{get;set;}
-    public required int Price{get;set;}
-    public required DateTime StartPickUp{get;set;}
-    public required DateTime EndPickUp{get;set;}
-    public ICollection<Order> Orders {get;set;} = new List<Order>();
+    public class Package
+    {
+        public int Id { get; set; }
+        public required string Name { get; set; }
+        public int NoPackages { get; set; }
+        public int BusinessId { get; set; }
+        public Business? Business { get; set; }
+        public int PackageTypeId { get; set; }
+        public PackageType? PackageType { get; set; }
+        public string? Description { get; set; }
+        public decimal Price { get; set; }
+        public DateTime PickUpStart { get; set; }
+        public DateTime PickUpEnd { get; set; }
+        public ICollection<Order> Orders { get; set; } = new List<Order>();
+    }
 }

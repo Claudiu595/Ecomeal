@@ -1,3 +1,4 @@
+@using EcoMeal.Client.Models; 
 @namespace EcoMeal.Site.Components.BusinessCard
 
 <style>
@@ -7,7 +8,6 @@
         border: 1px solid #dc3545;
         transition: all 0.2s ease-in-out;
     }
-
     .delete-btn:hover {
         background-color: white;
         color: #dc3545;
@@ -15,7 +15,7 @@
     }
 </style>
 
-<div class="card h-100 shadow-sm border-0" @onclick = "NavigateToDetails">
+<div class="card h-100 shadow-sm border-0" @onclick="NavigateToDetails">
     <div class="card-body d-flex flex-column">
         <div class="d-flex justify-content-between align-items-start mb-3">
             <h5 class="card-title fw-semibold mb-0">@Business.Name</h5>
@@ -25,7 +25,7 @@
         <p class="card-text text-muted flex-grow-1">@Business.Description</p>
 
         <ul class="list-unstyled mb-4 small text-secondary">
-            <li><strong>Address:</strong> @Business.Adress</li>
+            <li><strong>Address:</strong> @Business.Address</li> 
             <li><strong>Contact:</strong> @Business.Contact</li>
         </ul>
 

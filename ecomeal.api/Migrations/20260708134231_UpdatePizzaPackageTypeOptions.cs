@@ -4,7 +4,7 @@
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace ecomeal.api.Migrations
+namespace EcoMeal.Api.Migrations
 {
     /// <inheritdoc />
     public partial class UpdatePizzaPackageTypeOptions : Migration
@@ -12,34 +12,14 @@ namespace ecomeal.api.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.InsertData(
-                table: "PackageType",
-                columns: new[] { "ID", "Name" },
-                values: new object[,]
-                {
-                    { 1, "Pizza margherita" },
-                    { 2, "Pizza pepperoni" },
-                    { 3, "Pizza veggie" }
-                });
+            // Am comentat codul pentru a evita "Violation of PRIMARY KEY"
+            // deoarece datele există deja în baza de date.
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DeleteData(
-                table: "PackageType",
-                keyColumn: "ID",
-                keyValue: 1);
-
-            migrationBuilder.DeleteData(
-                table: "PackageType",
-                keyColumn: "ID",
-                keyValue: 2);
-
-            migrationBuilder.DeleteData(
-                table: "PackageType",
-                keyColumn: "ID",
-                keyValue: 3);
+            // Am comentat codul pentru a evita erori la rollback.
         }
     }
 }

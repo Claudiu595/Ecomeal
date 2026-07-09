@@ -1,49 +1,48 @@
-using EcoMeal.Site.Models;
+using System.Net.Http.Json;
+using EcoMeal.Client.Models;
 
-namespace EcoMeal.Site.Services;
+namespace EcoMeal.Client.Services;
+
 public class BusinessService
 {
     private readonly HttpClient _http;
+
     public BusinessService(HttpClient http)
     {
         _http = http;
     }
 
-    public async Task<List<BusinessModel>> GetAllAsync()
+    public async Task<List<BusinessModel>?> GetAllAsync()
     {
-        
-        var business = await _http.GetFromJsonAsync<List<BusinessModel>>("/api/business");
-        return business ?? new List<BusinessModel>();
+        return await _http.GetFromJsonAsync<List<BusinessModel>>("api/business");
     }
-    public async Task<bool> DeleteAsync(int ID)
+
+    public async Task<BusinessDetailsModel?> GetOneById(int id)
     {
-        var response = await _http.DeleteAsync($"api/business/{ID}");
+        return await _http.GetFromJsonAsync<BusinessDetailsModel>($"api/business/{id}");
+    }
+
+    public async Task<List<BusinessTypeModel>> GetBusinessTypes()
+    {
+        var types = await _http.GetFromJsonAsync<List<BusinessTypeModel>>("api/packagetype"); // Sau ruta ta pentru BusinessTypes
+        return types ?? new List<BusinessTypeModel>();
+    }
+
+    public async Task<bool> AddAsync(BusinessAddModel business)
+    {
+        var response = await _http.PostAsJsonAsync("api/business", business);
         return response.IsSuccessStatusCode;
     }
-    public async Task<BusinessDetailsModel?> GetById(int ID)
+
+    public async Task<bool> EditAsync(int id, BusinessAddModel business)
     {
-        var business = await _http.GetFromJsonAsync<BusinessDetailsModel>($"api/business/{ID}");
-        return business;
-    }
-    public async Task<List<PackageTypeModel>> GetPackageTypesAsync(int businessId)
-    {
-        var packageTypes = await _http.GetFromJsonAsync<List<PackageTypeModel>>($"api/business/{businessId}/packageTypes");
-        return packageTypes ?? new List<PackageTypeModel>();
+        var response = await _http.PutAsJsonAsync($"api/business/{id}", business);
+        return response.IsSuccessStatusCode;
     }
 
-    public async Task<bool> AddPackage(int businessId, PackageAddModel package)
+    public async Task<bool> DeleteAsync(int id)
     {
-        var payload = new
-        {
-            name = package.Name,
-            description = package.Description,
-            price = package.Price,
-            startPickup = package.StartPickup,
-            endPickup = package.EndPickup,
-            packageTypeId = package.PackageTypeId
-        };
-
-        var response = await _http.PostAsJsonAsync($"api/business/{businessId}/addPackage", payload);
+        var response = await _http.DeleteAsync($"api/business/{id}");
         return response.IsSuccessStatusCode;
     }
 }

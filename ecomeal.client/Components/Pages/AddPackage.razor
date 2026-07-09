@@ -1,111 +1,102 @@
-@page "/business/{BusinessId:int}/addPackage"
-@using EcoMeal.Site.Services
-@using EcoMeal.Site.Models
+@page "/business/{BusinessId:int}/package/add"
+@using EcoMeal.Client.Models
+@using EcoMeal.Client.Services
+@using MudBlazor
+@inject PackageService PackageService
+@inject NavigationManager NavigationManager
 
-    <h2>Adauga pachet</h2>
-    @if (!string.IsNullOrWhiteSpace(ErrorMessage))
-    {
-        <div class="alert alert-danger">@ErrorMessage</div>
-    }
+<PageTitle>Add Package</PageTitle>
 
-    <EditForm Model="PackageAddModel" OnValidSubmit="AddPackageToBusiness">
-        <DataAnnotationsValidator/>
-        <ValidationSummary/>
-    <label class="form-label">Nume</label>
-    <InputText class="form-control mb-2"
-               @bind-Value="PackageAddModel.Name"
-               placeholder="Adauga nume pachet" />
-    <ValidationMessage For="@(()=>PackageAddModel.Name)"/>
+<MudContainer MaxWidth="MaxWidth.Small" Class="py-8">
+    <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack"
+               Color="Color.Dark" Class="mb-4"
+               OnClick="NavigateBack">
+        Înapoi la afacere
+    </MudButton>
 
-    <label class="form-label">Descriere</label>
-    <InputTextArea @bind-Value="PackageAddModel.Description"
-                   placeholder="Descriere"
-                   rows="4"
-                   class="form-control mb-2" />
+    <MudPaper Class="pa-8 rounded-xl" Elevation="0" Style="border: 1px solid #e0e0e0; background-color: #ffffff;">
+        <MudText Typo="Typo.h5" Class="mb-2" Style="font-weight: 800; color: #212529;">Adaugă Pachet</MudText>
+        <MudText Typo="Typo.body2" Class="mb-6" Style="color: #6b7280;">Creează un nou pachet surpriză pentru clienți.</MudText>
 
-    <label class="form-label">Pret</label>
-    <InputNumber @bind-Value="PackageAddModel.Price"
-                 placeholder="Pret"
-                 class="form-control mb-2" />
+        <EditForm Model="PackageAddModel" OnValidSubmit="AddPackageToBusiness">
+            <DataAnnotationsValidator />
 
-    <label class="form-label">Start Pick-up</label>
-    <InputDate @bind-Value="PackageAddModel.StartPickup"
-               Type="InputDateType.DateTimeLocal"
-               placeholder="Start Pick-up"
-               class="form-control mb-2" />
+            <MudTextField @bind-Value="PackageAddModel.Name" Label="Nume Pachet" Variant="Variant.Outlined" Class="mb-4" Required="true" />
+            <MudTextField @bind-Value="PackageAddModel.Description" Label="Descriere" Variant="Variant.Outlined" Lines="3" Class="mb-4" />
+            
+            <MudNumericField @bind-Value="PackageAddModel.Price" Label="Preț" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" Class="mb-4" />
 
-    <label class="form-label">End Pick-up</label>
-    <InputDate @bind-Value="PackageAddModel.EndPickup"
-               Type="InputDateType.DateTimeLocal"
-               placeholder="End Pick-up"
-               class="form-control mb-2" />
+            <MudGrid Spacing="2" Class="mb-4">
+                <MudItem xs="6">
+                    <MudText Typo="Typo.caption" Class="mb-1">Pickup Start</MudText>
+                    <InputDate @bind-Value="PackageAddModel.StartPickup" Type="InputDateType.DateTimeLocal" class="form-control" />
+                </MudItem>
+                <MudItem xs="6">
+                    <MudText Typo="Typo.caption" Class="mb-1">Pickup End</MudText>
+                    <InputDate @bind-Value="PackageAddModel.EndPickup" Type="InputDateType.DateTimeLocal" class="form-control" />
+                </MudItem>
+            </MudGrid>
 
-    <label class="form-label">Tip pachet</label>
-    <InputSelect @bind-Value="PackageAddModel.PackageTypeId"
-                 class="form-control mb-2">
-        <option value="0" disabled>Alege tipul...</option>
-        @foreach (var packageType in PackageTypes)
-        {
-            <option value="@packageType.ID">@packageType.Name</option>
-        }
-    </InputSelect>
-    <button type="submit" class="btn btn-primary mt-3">Adaugă pachet</button>
+            <MudSelect @bind-Value="PackageAddModel.PackageTypeId" Label="Tip Pachet" Variant="Variant.Outlined" Class="mb-6">
+                @if (PackageTypes is not null)
+                {
+                    @foreach (var type in PackageTypes)
+                    {
+                        <MudSelectItem Value="type.Id">@type.Name</MudSelectItem>
+                    }
+                }
+            </MudSelect>
 
-</EditForm>
-
-
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Success" FullWidth="true" Size="Size.Large">
+                Creează Pachetul
+            </MudButton>
+        </EditForm>
+    </MudPaper>
+</MudContainer>
 
 @code {
-    [Parameter]
-    public int BusinessId { get; set; }
+    [Parameter] public int BusinessId { get; set; }
 
-    [Inject]
-    public required BusinessService BusinessService { get; set; }
+    public PackageAddModel PackageAddModel { get; set; } = new()
+    {
+        Name = string.Empty,
+        Description = string.Empty,
+        Price = 0,
+        PackageTypeId = 1,
+        StartPickup = DateTime.Now,
+        EndPickup = DateTime.Now.AddHours(2)
+    };
 
-    [Inject]
-    public required NavigationManager NavigationManager { get; set; }
-
-    private List<PackageTypeModel> PackageTypes { get; set; } = new();
-
-    public PackageAddModel PackageAddModel { get; set; } = new PackageAddModel()
-        {
-            Name = string.Empty,
-            Description = string.Empty,
-            Price = 0,
-            StartPickup = DateTime.Now,
-            EndPickup = DateTime.Now.AddHours(2),
-            PackageTypeId = 0
-        };
+    private List<PackageTypeModel>? PackageTypes;
 
     protected override async Task OnInitializedAsync()
     {
-        PackageTypes = await BusinessService.GetPackageTypesAsync(BusinessId);
-
-        if (PackageTypes.Any() && PackageAddModel.PackageTypeId == 0)
-        {
-            PackageAddModel.PackageTypeId = PackageTypes.First().ID;
-        }
+        PackageTypes = await PackageService.GetPackageTypes();
     }
-
-    private string ErrorMessage { get; set; } = string.Empty;
 
     public async Task AddPackageToBusiness()
+{
+    try 
     {
-        ErrorMessage = string.Empty;
-
-        if (PackageAddModel.PackageTypeId <= 0)
-        {
-            ErrorMessage = "Selecteaza un tip de pachet.";
-            return;
-        }
-
-        var success = await BusinessService.AddPackage(BusinessId, PackageAddModel);
-        if (success)
+        // 1. Verificam daca modelul este valid (obligatoriu)
+        var result = await PackageService.AddAsync(BusinessId, PackageAddModel);
+        
+        if (result)
         {
             NavigationManager.NavigateTo($"/business/{BusinessId}");
-            return;
         }
-
-        ErrorMessage = "Nu s-a putut salva pachetul. Verifica datele sau API-ul.";
+        else
+        {
+            // Aici poti adauga un Snackbar de eroare (MudBlazor)
+            Console.WriteLine("Eroare la salvare: Serviciul a returnat false.");
+        }
     }
+    catch (Exception ex)
+    {
+        // Aceasta va afisa eroarea in consola browserului (F12)
+        Console.WriteLine($"Exceptie fatala: {ex.Message}");
+    }
+}
+
+    private void NavigateBack() => NavigationManager.NavigateTo($"/business/{BusinessId}");
 }

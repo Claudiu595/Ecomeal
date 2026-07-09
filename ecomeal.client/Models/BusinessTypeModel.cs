@@ -1,6 +1,6 @@
-namespace EcoMeal.Api.Models
+namespace EcoMeal.Client.Models
 {
-    public class PackageTypeDTO
+    public class BusinessTypeModel
     {
         public int Id { get; set; }
         public required string Name { get; set; }

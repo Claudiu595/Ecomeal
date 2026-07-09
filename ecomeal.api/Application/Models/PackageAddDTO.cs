@@ -1,10 +1,14 @@
-namespace EcoMeal.API.Models;
-public class PackageAddDTO
+using System.ComponentModel.DataAnnotations;
+
+namespace EcoMeal.Api.Models
 {
-    public string Name { get; set; } = string.Empty;
-    public string Description { get; set; } = string.Empty;
-    public int Price { get; set; }
-    public DateTime StartPickup { get; set; }
-    public DateTime EndPickup { get; set; }
-    public int PackageTypeId { get; set; }
+    public class PackageAddDTO
+    {
+        public required string Name { get; set; }
+        public required string Description { get; set; }
+        public decimal Price { get; set; }
+        public DateTime StartPickup { get; set; }
+        public DateTime EndPickup { get; set; }
+        public int PackageTypeId { get; set; }
+    }
 }

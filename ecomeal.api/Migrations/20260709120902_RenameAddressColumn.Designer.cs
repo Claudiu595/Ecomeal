@@ -12,13 +12,13 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EcoMeal.Api.Migrations
 {
     [DbContext(typeof(EcoMealDbContext))]
-    [Migration("20260708090020_Fixes")]
-    partial class Fixes
+    [Migration("20260709120902_RenameAddressColumn")]
+    partial class RenameAddressColumn
     {
         /// <inheritdoc />
-        protected void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
-        #pragma warning disable 612, 618
+#pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "10.0.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);

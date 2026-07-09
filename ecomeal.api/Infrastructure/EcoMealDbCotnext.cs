@@ -1,7 +1,7 @@
-using EcoMeal.API.Entities;
+using EcoMeal.Api.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace EcoMeal.API.Infrastructure
+namespace EcoMeal.Api.Infrastructure
 {
     public class EcoMealDbContext : DbContext
     {
@@ -17,36 +17,36 @@ namespace EcoMeal.API.Infrastructure
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Business>().HasKey(e => e.ID);
+            modelBuilder.Entity<Business>().HasKey(e => e.Id);
 
             modelBuilder.Entity<Business>()
                 .HasOne(p => p.BusinessType)
                 .WithMany(p => p.Businesses)
-                .HasForeignKey(p => p.BusinessTypeID);
+                .HasForeignKey(p => p.BusinessTypeId);
 
-            modelBuilder.Entity<Order>().HasKey(e => e.ID);
+            modelBuilder.Entity<Order>().HasKey(e => e.Id);
 
             modelBuilder.Entity<Order>()
                 .HasOne(p => p.User)
                 .WithMany(p => p.Orders)
-                .HasForeignKey(p => p.UserID);
+                .HasForeignKey(p => p.UserId);
 
             modelBuilder.Entity<Order>()
                 .HasOne(p => p.Package)
                 .WithMany(p => p.Orders)
-                .HasForeignKey(p => p.PackageID);
+                .HasForeignKey(p => p.PackageId);
 
-            modelBuilder.Entity<Package>().HasKey(e => e.ID);
+            modelBuilder.Entity<Package>().HasKey(e => e.Id);
 
             modelBuilder.Entity<Package>()
                 .HasOne(p => p.Business)
                 .WithMany(p => p.Packages)
-                .HasForeignKey(p => p.BusinessID);
+                .HasForeignKey(p => p.BusinessId);
 
             modelBuilder.Entity<Package>()
                 .HasOne(p => p.PackageType)
                 .WithMany(p => p.Packages)
-                .HasForeignKey(p => p.PackageTypeID);
+                .HasForeignKey(p => p.PackageTypeId);
 
             modelBuilder.Entity<Package>()
                 .Property(p => p.Price)

@@ -1,47 +1,44 @@
-@page "/business/{ID:int}"
-@using EcoMeal.Site.Models
-@using EcoMeal.Site.Services;
+@page "/business/{Id:int}"
+@using EcoMeal.Client.Models
+@using EcoMeal.Client.Services
+@using MudBlazor
+@inject BusinessService BusinessService
 
-
-@if(Business is null)
+@if (Business == null)
 {
-    return;
+    <MudProgressCircular Indeterminate="true" Color="Color.Success" />
+}
+else
+{
+    <MudContainer MaxWidth="MaxWidth.Medium" Class="py-8">
+        <MudPaper Class="pa-8 rounded-xl shadow-sm mb-6" Elevation="0">
+            <div style="background-color: #35c022; color: white; display: inline-block; padding: 4px 16px; border-radius: 20px; font-weight: 600; margin-bottom: 16px;">
+                @Business.BusinessTypeName
+            </div>
+            
+            <MudText Typo="Typo.h3" Style="font-weight: 800; color: #212529;">@Business.Name</MudText>
+            <MudText Typo="Typo.body1" Class="mt-2" Style="color: #6c757d;">@Business.Description</MudText>
+            
+            <MudStack Row="true" Class="mt-6" Spacing="4">
+                <MudIcon Icon="@Icons.Material.Filled.LocationOn" Color="Color.Success" />
+                <MudText>@Business.Address</MudText>
+                <MudIcon Icon="@Icons.Material.Filled.Email" Color="Color.Success" Class="ms-4" />
+                <MudText>@Business.Contact</MudText>
+            </MudStack>
+        </MudPaper>
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <MudText Typo="Typo.h5" Style="font-weight: 700;">Pachete Disponibile</MudText>
+            <MudButton Variant="Variant.Filled" Color="Color.Success" StartIcon="@Icons.Material.Filled.Add" Href="@($"/business/{Id}/package/add")">
+                Adaugă Pachet
+            </MudButton>
+        </div>
+    </MudContainer>
 }
 
-<div class="container my-4">
-    <h1 class="mb-3">@Business.Name</h1>
-    <p class="text-muted mb-4">@Business.Description</p>
-    <p class="text-muted mb-4"><strong>Contact:</strong> @Business.Contact</p>
-    <p class="text-muted mb-4"><strong>Tip afacere:</strong> @Business.BusinessTypeName</p>
-    <p class="text-muted mb-4"><strong>Adresa:</strong> @Business.Adress</p>
-
-
-    <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
-        <h2 class="mb-0">Pachete</h2>
-        <button type="button"
-                class="btn btn-primary" @onclick = "NavigationToAddPackage">
-            + Adaugă pachet
-        </button>
-    </div>
-</div>
-
 @code {
-        [Parameter]
-        public int ID { get; set; }
+    [Parameter] public int Id { get; set; }
+    private BusinessDetailsModel? Business;
 
-        [Inject]
-        public required BusinessService businessService { get; set; }
-        [Inject]
-        public required NavigationManager NavigationManager { get; set; } 
-
-        private BusinessDetailsModel? Business;
-
-        protected override async Task OnInitializedAsync()
-        {
-            Business = await businessService.GetById(ID);
-        }
-        public void NavigationToAddPackage()
-        {
-            NavigationManager.NavigateTo($"/business/{ID}/addPackage");
-        }
+    protected override async Task OnInitializedAsync() => Business = await BusinessService.GetOneById(Id);
 }

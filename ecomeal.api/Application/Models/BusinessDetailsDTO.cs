@@ -1,6 +1,6 @@
-
-namespace EcoMeal.API.Models;
-public class BusinessDetailsDTO : BusinessDTO
+namespace EcoMeal.Api.Models
 {
-public List<PackageDTO> Packages { get; set; } = new();
+    public class BusinessDetailsDTO : BusinessDTO
+    {
+    }
 }

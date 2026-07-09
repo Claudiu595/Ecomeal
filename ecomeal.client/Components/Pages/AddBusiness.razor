@@ -1,0 +1,53 @@
+@page "/business/add"
+@using EcoMeal.Client.Models
+@using EcoMeal.Client.Services
+@using MudBlazor
+@inject BusinessService BusinessService
+@inject NavigationManager NavigationManager
+
+<MudContainer MaxWidth="MaxWidth.Small" Class="py-8">
+    <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack"
+               Color="Color.Dark" Class="mb-4"
+               Href="/">
+        Înapoi la listă
+    </MudButton>
+
+    <MudPaper Class="pa-8 rounded-xl" Elevation="0" Style="border: 1px solid #e0e0e0; background-color: #ffffff;">
+        <MudText Typo="Typo.h5" Class="mb-6" Style="font-weight: 700; color: #212529;">Adaugă o afacere nouă</MudText>
+
+        <EditForm Model="Model" OnValidSubmit="HandleSubmit">
+            <DataAnnotationsValidator />
+
+            <MudTextField @bind-Value="Model.Name" Label="Nume Afacere" Variant="Variant.Outlined" Class="mb-4" Required="true" />
+            <MudTextField @bind-Value="Model.Address" Label="Adresă" Variant="Variant.Outlined" Class="mb-4" Required="true" />
+            <MudTextField @bind-Value="Model.Description" Label="Descriere" Variant="Variant.Outlined" Lines="3" Class="mb-4" />
+            <MudTextField @bind-Value="Model.Contact" Label="Contact" Variant="Variant.Outlined" Class="mb-4" Required="true" />
+
+            <MudSelect @bind-Value="Model.BusinessTypeId" Label="Tip Afacere" Variant="Variant.Outlined" Class="mb-6">
+                @if (BusinessTypes != null)
+                {
+                    @foreach (var type in BusinessTypes)
+                    {
+                        <MudSelectItem Value="type.Id">@type.Name</MudSelectItem>
+                    }
+                }
+            </MudSelect>
+
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Success" FullWidth="true" Size="Size.Large">
+                Salvează Afacerea
+            </MudButton>
+        </EditForm>
+    </MudPaper>
+</MudContainer>
+
+@code {
+    public BusinessAddModel Model { get; set; } = new() { Name = "", Address = "", Contact = "", BusinessTypeId = 1 };
+    private List<BusinessTypeModel>? BusinessTypes;
+
+    protected override async Task OnInitializedAsync() => BusinessTypes = await BusinessService.GetBusinessTypes();
+
+    private async Task HandleSubmit()
+    {
+        if (await BusinessService.AddAsync(Model)) NavigationManager.NavigateTo("/");
+    }
+}

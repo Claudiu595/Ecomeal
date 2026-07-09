@@ -1,93 +1,88 @@
-using EcoMeal.API.Infrastructure;
-using EcoMeal.API.Entities;
-using EcoMeal.API.Models;
+using EcoMeal.Api.Entities;
+using EcoMeal.Api.Infrastructure;
+using EcoMeal.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace EcoMeal.API.Controllers;
-
-[ApiController]
-[Route("api/business/{id}/package")]
-public class PackageController : ControllerBase
+namespace EcoMeal.Api.Controllers
 {
-    private readonly EcoMealDbContext _context;
-
-    public PackageController(EcoMealDbContext context)
+    [ApiController]
+    [Route("api/business/{id}/package")]
+    public class PackageController : ControllerBase
     {
-        _context = context;
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> AddPackageToBusiness(int id, [FromBody] PackageAddDTO package)
-    {
-        _context.Package.Add(new Package
+        private readonly EcoMealDbContext _context;
+        public PackageController(EcoMealDbContext context)
         {
-            Name = package.Name,
-            Description = package.Description,
-            Price = package.Price,
-            StartPickUp = package.StartPickup,
-            EndPickUp = package.EndPickup,
-            PackageTypeID = package.PackageTypeId,
-            BusinessID = id,
-            //Business = package.Business,
-            NoPackage = 1
-        });
-
-        await _context.SaveChangesAsync();
-        return CreatedAtAction(nameof(GetAllPackages), new { id }, new { message = "Package created successfully." });
-    }
-
-    [HttpDelete("{packageId}")]
-    public async Task<ActionResult> DeletePackage(int packageId)
-    {
-        var package = await _context.Package.FirstOrDefaultAsync(p => p.ID == packageId);
-        if (package is null)
-        {
-            return NotFound("Couldn't find the package");
+            _context = context;
         }
 
-        _context.Package.Remove(package);
-        await _context.SaveChangesAsync();
-        return NoContent();
-    }
-
-    [HttpPut("{packageId}")]
-    public async Task<IActionResult> EditPackage(int packageId, [FromBody] PackageAddDTO package)
-    {
-        var existingPackage = await _context.Package.FirstOrDefaultAsync(p => p.ID == packageId);
-        if (existingPackage is null)
+        [HttpPost]
+        public async Task<IActionResult> AddPackageToBusiness(int id, [FromBody] PackageAddDTO package)
         {
-            return NotFound("Couldn't find the package");
-        }
-
-        existingPackage.Name = package.Name;
-        existingPackage.Description = package.Description;
-        existingPackage.Price = package.Price;
-        existingPackage.StartPickUp = package.StartPickup;
-        existingPackage.EndPickUp = package.EndPickup;
-        existingPackage.PackageTypeID = package.PackageTypeId;
-
-        await _context.SaveChangesAsync();
-        return NoContent();
-    }
-
-    [HttpGet]
-    public async Task<ActionResult<List<PackageDTO>>> GetAllPackages(int id)
-    {
-        var packages = await _context.Package
-            .Where(p => p.BusinessID == id)
-            .Select(p => new PackageDTO
+            _context.Package.Add(new Package
             {
-                ID = p.ID,
-                Name = p.Name,
-                Description = p.Description ?? string.Empty,
-                Price = p.Price,
-                StartPickup = p.StartPickUp,
-                EndPickup = p.EndPickUp,
-                PackageType = p.PackageTypeID
-            })
-            .ToListAsync();
+                Name = package.Name,
+                Description = package.Description,
+                Price = package.Price,
+                PickUpStart = package.StartPickup,
+                PickUpEnd = package.EndPickup,
+                PackageTypeId = package.PackageTypeId,
+                BusinessId = id
+            });
 
-        return Ok(packages);
+            await _context.SaveChangesAsync();
+            return Created();
+        }
+
+        [HttpDelete("{PackageId}")]
+        public async Task<ActionResult> DeletePackage(int PackageId)
+        {
+            int count = await _context.Package.Where(p => p.Id == PackageId).ExecuteDeleteAsync();
+            if (count == 0)
+            {
+                return NotFound("Couldn't find the package");
+            }
+            return NoContent();
+        }
+
+        [HttpPut("{PackageId}")]
+        public async Task<IActionResult> EditPackage(int PackageId, [FromBody] PackageAddDTO package)
+        {
+            var existingPackage = await _context.Package.FirstOrDefaultAsync(p => p.Id == PackageId);
+            if (existingPackage == null)
+            {
+                return NotFound("Couldn't find the package");
+            }
+
+            existingPackage.Name = package.Name;
+            existingPackage.Description = package.Description;
+            existingPackage.Price = package.Price;
+            existingPackage.PickUpStart = package.StartPickup;
+            existingPackage.PickUpEnd = package.EndPickup;
+            existingPackage.PackageTypeId = package.PackageTypeId;
+
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<List<PackageDTO>>> GetAllPackages(int id)
+        {
+            var packages = await _context.Package
+                .Where(p => p.BusinessId == id)
+                .Select(p => new PackageDTO
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Description = p.Description,
+                    Price = p.Price,
+                    PickUpStart = p.PickUpStart,
+                    PickUpEnd = p.PickUpEnd,
+                    PackageTypeName = p.PackageType != null ? p.PackageType.Name : "Fără tip"
+                })
+                .ToListAsync();
+
+            return Ok(packages);
+        }
     }
 }

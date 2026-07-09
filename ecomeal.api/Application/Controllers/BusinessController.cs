@@ -1,105 +1,103 @@
-using EcoMeal.API.Models;
+using EcoMeal.Api.Entities;
+using EcoMeal.Api.Infrastructure;
+using EcoMeal.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using EcoMeal.API.Infrastructure;
 
-namespace EcoMeal.API.Application.Controllers;
-
-[ApiController]
-[Route("api/[controller]")]
-public class BusinessController : ControllerBase
+namespace EcoMeal.Api.Controllers
 {
-    private readonly EcoMealDbContext _context;
-
-    public BusinessController(EcoMealDbContext context)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class BusinessController : ControllerBase
     {
-        _context = context;
-    }
+        private readonly EcoMealDbContext _context;
+        public BusinessController(EcoMealDbContext context) {
+            _context = context;
+        }
+        [HttpGet]
+public async Task<ActionResult<IEnumerable<BusinessDTO>>> GetBusinesses()
+{
+    var businessesDTOs = await _context.Business
+        .Include(b => b.BusinessType)
+        .Select(b => new BusinessDTO
+        {
+            Id = b.Id,
+            Name = b.Name,
+            Address = b.Address,
+            Description = b.Description ?? string.Empty, 
+            Contact = b.Contact,
+            BusinessTypeName = b.BusinessType != null ? b.BusinessType.Name : "N/A" 
+        }).ToListAsync();
 
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<BusinessDTO>>> GetAll()
-    {
-        var businessesDTOs = await _context.Business
-            .Include(b => b.BusinessType)
-            .Select(b => new BusinessDTO
+    return Ok(businessesDTOs);
+}
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteBusinsess(int id) { 
+            int count = await _context.Business.Where(b => b.Id == id).ExecuteDeleteAsync();
+            if (count == 0)
             {
-                ID = b.ID,
-                Name = b.Name,
-                Adress = b.Adress,
-                Description = b.Description ?? string.Empty,
-                Contact = b.Contact,
-                BusinessTypeName = b.BusinessType.Name
-            })
-            .ToListAsync();
-
-        return Ok(businessesDTOs);
-    }
-
-    [HttpDelete("{ID}")]
-    public async Task<IActionResult> Delete(int ID)
-    {
-        var business = await _context.Business.FindAsync(ID);
-        if (business is null)
-        {
-            return NotFound();
+                return NotFound("Couldn't find the business");
+            }
+            return NoContent();
         }
 
-        _context.Business.Remove(business);
-        await _context.SaveChangesAsync();
-        return NoContent();
-    }
-
-    [HttpGet("{ID}")]
-    public async Task<ActionResult<BusinessDetailsDTO>> GetOneById(int ID)
-    {
-        var business = await _context.Business
-            .Include(b => b.BusinessType)
-            .Include(b => b.Packages)
-            .FirstOrDefaultAsync(b => b.ID == ID);
-
-        if (business is null)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<BusinessDetailsDTO>> GetOneById(int id)
         {
-            return NotFound();
-        }
-
-        var dto = new BusinessDetailsDTO
-        {
-            ID = business.ID,
-            Name = business.Name,
-            Adress = business.Adress,
-            Description = business.Description ?? string.Empty,
-            Contact = business.Contact,
-            BusinessTypeName = business.BusinessType.Name,
-            Packages = business.Packages.Select(p => new PackageDTO
+            var business = await _context.Business
+                .Select(b => new BusinessDetailsDTO
+                {
+                    Id = b.Id,
+                    Name = b.Name,
+                    Address = b.Address,
+                    Description = b.Description,
+                    Contact = b.Contact,
+                    BusinessTypeName = b.BusinessType.Name,
+                })
+                .FirstOrDefaultAsync(b => b.Id == id);
+            if (business is null)
             {
-                ID = p.ID,
-                Name = p.Name,
-                Description = p.Description ?? string.Empty,
-                Price = p.Price,
-                StartPickup = p.StartPickUp,
-                EndPickup = p.EndPickUp,
-                PackageType = p.PackageTypeID
-            }).ToList()
-        };
+                return NotFound();
+            }
 
-        return Ok(dto);
-    }
-
-    [HttpPut("{ID}")]
-    public async Task<IActionResult> EditBusiness(int ID, [FromBody] BusinessDTO business)
-    {
-        var existingBusiness = await _context.Business.FirstOrDefaultAsync(b => b.ID == ID);
-        if (existingBusiness is null)
-        {
-            return NotFound();
+            return Ok(business);
         }
 
-        existingBusiness.Name = business.Name;
-        existingBusiness.Adress = business.Adress;
-        existingBusiness.Description = business.Description;
-        existingBusiness.Contact = business.Contact;
+        [HttpPost]
+        public async Task<IActionResult> AddBusiness([FromBody] BusinessAddDTO business)
+        {
+            _context.Business.Add(new Business
+            {
+                Name = business.Name,
+                Address = business.Address,
+                Description = business.Description,
+                Contact = business.Contact,
+                BusinessTypeId = business.BusinessTypeId,
+                BusinessType = null!
+            });
 
-        await _context.SaveChangesAsync();
-        return NoContent();
+            await _context.SaveChangesAsync();
+            return Created();
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> EditBusiness(int id, [FromBody] BusinessAddDTO business)
+        {
+            var existingBusiness = await _context.Business.FirstOrDefaultAsync(b => b.Id == id);
+            if (existingBusiness == null)
+            {
+                return NotFound("Couldn't find the business");
+            }
+
+            existingBusiness.Name = business.Name;
+            existingBusiness.Address = business.Address;
+            existingBusiness.Description = business.Description;
+            existingBusiness.Contact = business.Contact;
+            existingBusiness.BusinessTypeId = business.BusinessTypeId;
+
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
     }
 }

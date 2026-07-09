@@ -4,7 +4,7 @@
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace ecomeal.api.Migrations
+namespace EcoMeal.Api.Migrations
 {
     /// <inheritdoc />
     public partial class UpdateDatabaseSchema : Migration

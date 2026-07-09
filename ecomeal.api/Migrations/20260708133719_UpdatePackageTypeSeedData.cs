@@ -4,7 +4,7 @@
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace ecomeal.api.Migrations
+namespace EcoMeal.Api.Migrations
 {
     /// <inheritdoc />
     public partial class UpdatePackageTypeSeedData : Migration
@@ -12,15 +12,7 @@ namespace ecomeal.api.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.InsertData(
-                table: "PackageType",
-                columns: new[] { "ID", "Name" },
-                values: new object[,]
-                {
-                    { 1, "Combo rapid" },
-                    { 2, "Menu family" },
-                    { 3, "Box de gustari" }
-                });
+            // Lăsăm intenționat gol pentru a nu mai provoca eroarea de "duplicate key"
         }
 
         /// <inheritdoc />

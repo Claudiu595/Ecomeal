@@ -1,82 +1,42 @@
-using EcoMeal.Site.Models;
-using EcoMeal.Site.Services;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.WebUtilities;
+using EcoMeal.Client.Models;
+using EcoMeal.Client.Services;
 
-namespace EcoMeal.Site.Components.BusinessList;
-
-public partial class BusinessList
+namespace EcoMeal.Client.Components.BusinessList
 {
-    [Inject]
-    public required BusinessService BusinessService { get; set; }
-
-    [Inject]
-    public required NavigationManager NavigationManager { get; set; }
-
-    private List<BusinessModel>? Businesses { get; set; }
-    private List<BusinessModel>? AllBusinesses { get; set; }
-    private string SearchText { get; set; } = string.Empty;
-
-    protected override async Task OnInitializedAsync()
+    public partial class BusinessList : ComponentBase, IDisposable
     {
-        AllBusinesses = await BusinessService.GetAllAsync();
-        ApplyFilter();
-    }
+        [Inject] public required BusinessService BusinessService { get; set; }
+        [Inject] public required SearchService SearchService { get; set; }
+        [Inject] public required NavigationManager NavigationManager { get; set; }
 
-    protected override void OnParametersSet()
-    {
-        SearchText = GetSearchText();
-        ApplyFilter();
-    }
+        public List<BusinessModel>? Businesses { get; private set; }
+        private List<BusinessModel>? AllBusinesses { get; set; }
 
-    private string GetSearchText()
-    {
-        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
-        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("search", out var value))
+        protected override async Task OnInitializedAsync()
         {
-            return value.ToString() ?? string.Empty;
+            AllBusinesses = await BusinessService.GetAllAsync();
+            SearchService.OnSearchChanged += ApplyFilter;
+            ApplyFilter(SearchService.SearchTerm);
         }
 
-        return string.Empty;
-    }
-
-    private void ApplyFilter()
-    {
-        if (AllBusinesses is null)
+        private void ApplyFilter(string query)
         {
-            Businesses = null;
-            return;
+            if (AllBusinesses == null) return;
+            Businesses = string.IsNullOrWhiteSpace(query) ? AllBusinesses 
+                : AllBusinesses.Where(b => b.Name.Contains(query, StringComparison.OrdinalIgnoreCase)).ToList();
+            StateHasChanged();
         }
 
-        var query = SearchText.Trim();
-        if (string.IsNullOrWhiteSpace(query))
+        public async Task HandleDelete(int id)
         {
-            Businesses = AllBusinesses;
-            return;
+            if (await BusinessService.DeleteAsync(id))
+            {
+                AllBusinesses = await BusinessService.GetAllAsync();
+                ApplyFilter(SearchService.SearchTerm);
+            }
         }
 
-        Businesses = AllBusinesses
-            .Where(b =>
-                b.Name.Contains(query, StringComparison.OrdinalIgnoreCase) ||
-                b.Adress.Contains(query, StringComparison.OrdinalIgnoreCase) ||
-                b.Description?.Contains(query, StringComparison.OrdinalIgnoreCase) == true ||
-                b.Contact.Contains(query, StringComparison.OrdinalIgnoreCase) ||
-                b.BusinessTypeName.Contains(query, StringComparison.OrdinalIgnoreCase))
-            .ToList();
-    }
-
-    private void HandleDelete(int id)
-    {
-        if (Businesses is null)
-        {
-            return;
-        }
-
-        AllBusinesses = AllBusinesses?
-            .Where(b => b.ID != id)
-            .ToList();
-
-        ApplyFilter();
-        StateHasChanged();
+        public void Dispose() => SearchService.OnSearchChanged -= ApplyFilter;
     }
 }
