@@ -1,8 +1,6 @@
-using System.Runtime.CompilerServices;
-using Ecomeal.Site.Models;
 using EcoMeal.Site.Models;
 
-namespace Ecomeal.Site.Services;
+namespace EcoMeal.Site.Services;
 public class BusinessService
 {
     private readonly HttpClient _http;

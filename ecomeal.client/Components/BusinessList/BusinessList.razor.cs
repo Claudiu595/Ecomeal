@@ -1,9 +1,9 @@
-using Ecomeal.Site.Models;
-using Ecomeal.Site.Services;
+using EcoMeal.Site.Models;
+using EcoMeal.Site.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.WebUtilities;
 
-namespace Ecomeal.Site.Components.BusinessList;
+namespace EcoMeal.Site.Components.BusinessList;
 
 public partial class BusinessList
 {

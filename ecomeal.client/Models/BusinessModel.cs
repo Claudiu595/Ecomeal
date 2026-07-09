@@ -1,4 +1,4 @@
-namespace Ecomeal.Site.Models;
+namespace EcoMeal.Site.Models;
 
 public class BusinessModel
 {

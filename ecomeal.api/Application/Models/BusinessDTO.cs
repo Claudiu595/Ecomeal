@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Ecomeal.API.Models;
+namespace EcoMeal.API.Models;
 public class BusinessDTO{
     
     public int ID {get;set;}

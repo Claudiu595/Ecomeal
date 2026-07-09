@@ -12,7 +12,7 @@ builder.Services.AddHttpClient("EcoMealApi",client =>
 });
 builder.Services.AddScoped(sp => 
 sp.GetRequiredService<IHttpClientFactory>().CreateClient("EcoMealApi"));
-builder.Services.AddScoped<Ecomeal.Site.Services.BusinessService>();
+builder.Services.AddScoped<EcoMeal.Site.Services.BusinessService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -1,8 +1,8 @@
-using Ecomeal.Site.Models;
-using Ecomeal.Site.Services;
+using EcoMeal.Site.Models;
+using EcoMeal.Site.Services;
 using Microsoft.AspNetCore.Components;
 
-namespace Ecomeal.Site.Components.BusinessCard;
+namespace EcoMeal.Site.Components.BusinessCard;
 
 public partial class BusinessCard
 {

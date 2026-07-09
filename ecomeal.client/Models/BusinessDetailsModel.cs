@@ -9,5 +9,5 @@ public class BusinessDetailsModel
     public string Contact { get; set; } = "";
     public string BusinessTypeName { get; set; } = "";
     // public IEnumerable<PackageGetModel> Packages { get; set; } = new List<PackageGetModel>();
-
+    public List<PackageGetModel> Packages { get; set; } = new List<PackageGetModel>();
 }
