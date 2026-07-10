@@ -21,6 +21,7 @@ builder.Services.AddAuthorization();
 // Add Identity API endpoints with roles support
 builder.Services.AddIdentityApiEndpoints<User>(options =>
 {
+    options.SignIn.RequireConfirmedAccount = false;
     options.Password.RequireDigit = true;
     options.Password.RequiredLength = 6;
     options.Password.RequireNonAlphanumeric = false;
@@ -65,11 +66,9 @@ app.MapIdentityApi<User>();
 
 app.UseCors("AllowBlazorSite");
 
-app.UseAuthentication();
-app.UseAuthorization();
 
 // Map Identity default endpoints (/register, /login, /refresh, etc.)
-app.MapIdentityApi<User>();
+
 
 app.MapControllers();
 

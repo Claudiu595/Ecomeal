@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ecomeal.client")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+128849676448da9fd6b690d1bd991cbb8f0eee93")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9f6ca70a8c6b0513b5e1a338bb27f9868e22a867")]
 [assembly: System.Reflection.AssemblyProductAttribute("ecomeal.client")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ecomeal.client")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
