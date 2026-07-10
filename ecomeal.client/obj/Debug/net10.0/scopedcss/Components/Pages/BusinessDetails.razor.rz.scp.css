@@ -1,0 +1,9 @@
+[b-g01qdwzl19] .mud-card:hover {
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08) !important;
+    transform: translateY(-2px);
+}
+
+.empty-state p[b-g01qdwzl19] {
+    font-size: 1rem;
+    margin-bottom: 1.25rem;
+}
