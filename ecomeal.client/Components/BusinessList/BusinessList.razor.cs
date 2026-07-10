@@ -35,7 +35,10 @@ namespace EcoMeal.Client.Components.BusinessList
                 AllBusinesses = await BusinessService.GetAllAsync();
                 ApplyFilter(SearchService.SearchTerm);
             }
+            StateHasChanged();
+
         }
+        
 
         public void Dispose() => SearchService.OnSearchChanged -= ApplyFilter;
     }

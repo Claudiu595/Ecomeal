@@ -17,16 +17,19 @@ public partial class BusinessCard
     
     [Inject]
     public required NavigationManager NavigationManager { get; set; }
+    private void EditClick()
+    {
+        NavigationManager.NavigateTo($"/business/{Business.Id}/edit");
+    }
 
     private async Task DeleteClick()
     {
         // Folosim Business.Id (cu "d" mic)
-        var success = await BusinessService.DeleteAsync(Business.Id); 
 
-        if (success)
-        {
+        
             await OnDeleteRequested.InvokeAsync(Business.Id);
-        }
+        
+        
     }
     public void NavigateToDetails()
     {

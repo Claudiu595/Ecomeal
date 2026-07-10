@@ -12,7 +12,8 @@ else
         @foreach (var business in Businesses)
         {
             <MudItem xs="12" md="4">
-                <BusinessCard Business="business" />
+                <BusinessCard Business="business" OnDeleteRequested="HandleDelete" />
+
             </MudItem>
         }
     </MudGrid>
