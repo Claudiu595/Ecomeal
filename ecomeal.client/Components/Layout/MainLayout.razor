@@ -1,23 +1,59 @@
 ﻿@inherits LayoutComponentBase
 @using EcoMeal.Site.Services
+@using EcoMeal.Client.Services
 @inject AuthService AuthService
-@inject NavigationManager Navigation
+@inject NavigationManager NavigationManager
+@inject SearchService SearchService
+
 <MudPopoverProvider />
+
+<style>
+    /* Stilizare pentru bara de căutare: text, border și focus outline complet albe */
+    .custom-search-input {
+        background-color: rgba(255, 255, 255, 0.2) !important;
+        border: 1.5px solid #ffffff !important;
+        color: #ffffff !important;
+    }
+    
+    .custom-search-input::placeholder {
+        color: #ffffff !important;
+        opacity: 0.8; /* Ușor transparent ca să se distingă de textul tastat */
+    }
+
+    .custom-search-input:focus {
+        background-color: rgba(255, 255, 255, 0.3) !important;
+        border-color: #ffffff !important;
+        /* Outline-ul alb la selectare/focus */
+        box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.5) !important; 
+        color: #ffffff !important;
+    }
+</style>
 
 <div class="page">
     <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light px-4 border-bottom">
-            <a class="navbar-brand font-weight-bold" href="/">EcoMeal</a>
-            <div class="ms-auto">
-                @if (AuthService.IsAuthenticated)
-                {
-                    <span class="me-3 text-secondary">Logged In</span>
-                    <button class="btn btn-outline-danger btn-sm" @onclick="HandleLogout">Logout</button>
-                }
-                else
-                {
-                    <a class="btn btn-outline-primary btn-sm" href="/login">Login</a>
-                }
+        <nav class="navbar navbar-expand-lg px-4 shadow-sm" style="background: linear-gradient(90deg, #35c022 0%, #5CB85C 100%);">
+            <div class="container-fluid d-flex align-items-center">
+                
+                <a class="navbar-brand d-flex align-items-center me-3" href="/">
+                    <span class="text-white fw-bold" style="font-size: 1.5rem;">EcoMeal</span>
+                </a>
+
+                <form class="d-flex flex-grow-1 mx-lg-4" @onsubmit:preventDefault="true">
+                    <input class="form-control custom-search-input" type="search" placeholder="Search businesses..." aria-label="Search businesses"
+                           value="@SearchTerm" @oninput="OnSearchChanged" style="max-width: 500px;" />
+                </form>
+
+                <div class="ms-auto d-flex align-items-center">
+                    @if (AuthService.IsAuthenticated)
+                    {
+                        <span class="me-3 text-white fw-medium">Logged In</span>
+                        <button class="btn btn-outline-light btn-sm fw-bold" @onclick="HandleLogout">Logout</button>
+                    }
+                    else
+                    {
+                        <a class="btn btn-outline-light btn-sm fw-bold" href="/login">Login</a>
+                    }
+                </div>
             </div>
         </nav>
     </header>
@@ -35,6 +71,24 @@
 </div>
 
 @code {
+    private string SearchTerm { get; set; } = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        SearchTerm = GetSearchTerm();
+        SearchService.UpdateSearch(SearchTerm); 
+    }
+
+    protected override void OnParametersSet()
+    {
+        var urlSearch = GetSearchTerm();
+        if (SearchTerm != urlSearch)
+        {
+            SearchTerm = urlSearch;
+            SearchService.UpdateSearch(SearchTerm);
+        }
+    }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -44,9 +98,24 @@
         }
     }
 
+    private void OnSearchChanged(ChangeEventArgs e)
+    {
+        SearchTerm = e.Value?.ToString() ?? string.Empty;
+        
+        SearchService.UpdateSearch(SearchTerm); 
+        NavigationManager.NavigateTo(NavigationManager.GetUriWithQueryParameter("search", SearchTerm));
+    }
+
+    private string GetSearchTerm()
+    {
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+        return query.TryGetValue("search", out var value) ? value.ToString() ?? string.Empty : string.Empty;
+    }
+
     private async Task HandleLogout()
     {
         await AuthService.LogoutAsync();
-        Navigation.NavigateTo("/", forceLoad: true);
+        NavigationManager.NavigateTo("/", forceLoad: true);
     }
 }

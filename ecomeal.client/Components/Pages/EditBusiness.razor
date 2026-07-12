@@ -4,6 +4,20 @@
 
 <PageTitle>Edit Business</PageTitle>
 
+<style>
+    .solid-dropdown-popover {
+        background-color: #ffffff !important;
+        border: 1px solid #e0e0e0;
+        box-shadow: 0px 4px 12px rgba(0,0,0,0.15) !important;
+    }
+    .solid-dropdown-popover .mud-list-item-text {
+        color: #212529 !important;
+    }
+    .solid-dropdown-popover .mud-list-item:hover {
+        background-color: #f1f1f1 !important;
+    }
+</style>
+
 <MudContainer MaxWidth="MaxWidth.Small" Class="py-8">
     <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack"
                Style="text-transform: none; color: #000; font-weight: 600; margin-bottom: 1rem;"
@@ -62,7 +76,9 @@
                            Variant="Variant.Outlined"
                            Class="mb-6"
                            Required="true"
-                           RequiredError="Please select a business type">
+                           RequiredError="Please select a business type"
+                           AnchorOrigin="Origin.BottomCenter"
+                           PopoverClass="solid-dropdown-popover">
                 @if (BusinessTypes is not null)
                 {
                     @foreach (var type in BusinessTypes)

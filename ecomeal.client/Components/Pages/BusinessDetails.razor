@@ -1,12 +1,17 @@
 @page "/business/{Id:int}"
 @using EcoMeal.Client.Models
 @using EcoMeal.Client.Services
+@using Microsoft.AspNetCore.Components.Authorization
 @using MudBlazor
 @inject BusinessService BusinessService
+@inject PackageService PackageService
+@inject ISnackbar Snackbar
 
 @if (Business == null)
 {
-    <MudProgressCircular Indeterminate="true" Color="Color.Success" />
+    <div class="d-flex justify-content-center mt-8">
+        <MudProgressCircular Indeterminate="true" Color="Color.Success" />
+    </div>
 }
 else
 {
@@ -29,10 +34,60 @@ else
 
         <div class="d-flex justify-content-between align-items-center mb-4">
             <MudText Typo="Typo.h5" Style="font-weight: 700;">Pachete Disponibile</MudText>
-            <MudButton Variant="Variant.Filled" Color="Color.Success" StartIcon="@Icons.Material.Filled.Add" Href="@($"/business/{Id}/package/add")">
-                Adaugă Pachet
-            </MudButton>
+            
+            <AuthorizeView Roles="Admin">
+                <Authorized>
+                    <MudButton Variant="Variant.Filled" Color="Color.Success" StartIcon="@Icons.Material.Filled.Add" Href="@($"/business/{Id}/package/add")">
+                        Adaugă Pachet
+                    </MudButton>
+                </Authorized>
+            </AuthorizeView>
         </div>
+
+        <MudGrid>
+            @if (Business.Packages != null && Business.Packages.Any())
+            {
+                @foreach (var pkg in Business.Packages)
+                {
+                    <MudItem xs="12" sm="6" md="4">
+                        <MudCard Elevation="3" Class="h-100 d-flex flex-column rounded-xl border-0" Style="background: linear-gradient(135deg, #35c022 0%, #4cae4c 100%); color: white;">
+                            <MudCardHeader>
+                                <CardHeaderContent>
+                                    <MudText Typo="Typo.h6" Style="font-weight: 700; color: white;">@pkg.Name</MudText>
+                                    <MudText Typo="Typo.body2" Style="color: #e8f5e9;">@pkg.PackageTypeName</MudText>
+                                </CardHeaderContent>
+                                <CardHeaderActions>
+                                    <div style="background-color: white; color: #35c022; padding: 4px 12px; border-radius: 20px; font-weight: bold; margin-top: 8px;">
+                                        @pkg.Price Lei
+                                    </div>
+                                </CardHeaderActions>
+                            </MudCardHeader>
+                            <MudCardContent Class="flex-grow-1">
+                                <MudText Typo="Typo.body2" Class="mb-3" Style="color: #f1f8e9;">@pkg.Description</MudText>
+                                <div style="font-size: 0.85rem; background-color: rgba(255, 255, 255, 0.2); padding: 10px; border-radius: 8px;">
+                                    <div><strong style="color: white;">Start:</strong> @pkg.PickUpStart.ToString("dd/MM/yyyy HH:mm")</div>
+                                    <div class="mt-1"><strong style="color: white;">End:</strong> @pkg.PickUpEnd.ToString("dd/MM/yyyy HH:mm")</div>
+                                </div>
+                            </MudCardContent>
+                            <MudCardActions Class="justify-end pb-4 pe-4">
+                                <AuthorizeView Roles="Admin">
+                                    <Authorized Context="adminAuth">
+                                        <MudButton Variant="Variant.Filled" Style="background-color: white; color: #35c022; font-weight: 600;" Size="Size.Small" Href="@($"/business/{Id}/editPackage/{pkg.Id}")" Class="me-2">Edit</MudButton>
+                                        <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" OnClick="@(() => HandleDeletePackage(pkg.Id))">Delete</MudButton>
+                                    </Authorized>
+                                </AuthorizeView>
+                            </MudCardActions>
+                        </MudCard>
+                    </MudItem>
+                }
+            }
+            else
+            {
+                <MudItem xs="12">
+                    <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">Nu există pachete adăugate momentan pentru această afacere.</MudAlert>
+                </MudItem>
+            }
+        </MudGrid>
     </MudContainer>
 }
 
@@ -40,5 +95,31 @@ else
     [Parameter] public int Id { get; set; }
     private BusinessDetailsModel? Business;
 
-    protected override async Task OnInitializedAsync() => Business = await BusinessService.GetOneById(Id);
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDataAsync();
+    }
+
+    private async Task LoadDataAsync()
+    {
+        Business = await BusinessService.GetOneById(Id);
+        if (Business != null)
+        {
+            Business.Packages = await PackageService.GetByBusinessId(Id);
+        }
+    }
+
+    private async Task HandleDeletePackage(int packageId)
+    {
+        var success = await PackageService.DeleteAsync(Id, packageId);
+        if (success)
+        {
+            Snackbar.Add("Pachetul a fost șters cu succes!", Severity.Success);
+            await LoadDataAsync(); 
+        }
+        else
+        {
+            Snackbar.Add("Eroare la ștergerea pachetului.", Severity.Error);
+        }
+    }
 }

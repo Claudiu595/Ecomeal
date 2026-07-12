@@ -1,29 +1,12 @@
 @using EcoMeal.Client.Models; 
+@using Microsoft.AspNetCore.Components.Authorization
 @namespace EcoMeal.Site.Components.BusinessCard
 
 <style>
-    .delete-btn {
-        background-color: #dc3545;
-        color: white;
-        border: 1px solid #dc3545;
-        transition: all 0.2s ease-in-out;
-    }
-    .delete-btn:hover {
-        background-color: white;
-        color: #dc3545;
-        border-color: #dc3545;
-    }
-    .edit-btn {
-        background-color: #35c022;
-        color: white;
-        border: 1px solid #35c022;
-        transition: all 0.2s ease-in-out;
-    }
-    .edit-btn:hover {
-        background-color: white;
-        color: #35c022;
-        border-color: #35c022;
-    }
+    .delete-btn { background-color: #dc3545; color: white; border: 1px solid #dc3545; transition: all 0.2s ease-in-out; }
+    .delete-btn:hover { background-color: white; color: #dc3545; border-color: #dc3545; }
+    .edit-btn { background-color: #35c022; color: white; border: 1px solid #35c022; transition: all 0.2s ease-in-out; }
+    .edit-btn:hover { background-color: white; color: #35c022; border-color: #35c022; }
 </style>
 
 <div class="card h-100 shadow-sm border-0" @onclick="NavigateToDetails">
@@ -39,16 +22,22 @@
             <li><strong>Address:</strong> @Business.Address</li> 
             <li><strong>Contact:</strong> @Business.Contact</li>
         </ul>
-        <div>
-        <button class="btn btn-success btn-sm mt-auto align-self-end edit-btn"
-                @onclick="EditClick" @onclick:stopPropagation="true">
-            Edit
-        </button>
+        
+        <!-- Restricție de rol: Doar Adminii văd funcțiile de Edit/Delete -->
+        <AuthorizeView Roles="Admin">
+            <Authorized>
+                <div>
+                    <button class="btn btn-success btn-sm mt-auto align-self-end edit-btn"
+                            @onclick="EditClick" @onclick:stopPropagation="true">
+                        Edit
+                    </button>
 
-        <button class="btn btn-danger btn-sm mt-auto align-self-end delete-btn"
-                @onclick="DeleteClick" @onclick:stopPropagation="true">
-            Delete
-        </button>
-        </div>
+                    <button class="btn btn-danger btn-sm mt-auto align-self-end delete-btn"
+                            @onclick="DeleteClick" @onclick:stopPropagation="true">
+                        Delete
+                    </button>
+                </div>
+            </Authorized>
+        </AuthorizeView>
     </div>
 </div>

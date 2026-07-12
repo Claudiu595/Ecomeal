@@ -7,6 +7,20 @@
 
 <PageTitle>Add Package</PageTitle>
 
+<style>
+    .solid-dropdown-popover {
+        background-color: #ffffff !important;
+        border: 1px solid #e0e0e0;
+        box-shadow: 0px 4px 12px rgba(0,0,0,0.15) !important;
+    }
+    .solid-dropdown-popover .mud-list-item-text {
+        color: #212529 !important; /* Text negru/închis */
+    }
+    .solid-dropdown-popover .mud-list-item:hover {
+        background-color: #f1f1f1 !important; /* Culoare ușor gri la hover */
+    }
+</style>
+
 <MudContainer MaxWidth="MaxWidth.Small" Class="py-8">
     <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack"
                Color="Color.Dark" Class="mb-4"
@@ -14,7 +28,7 @@
         Înapoi la afacere
     </MudButton>
 
-    <MudPaper Class="pa-8 rounded-xl" Elevation="0" Style="border: 1px solid #e0e0e0; background-color: #ffffff;">
+    <MudPaper Class="pa-8 rounded-xl shadow-sm" Elevation="0" Style="border: 1px solid #e0e0e0; background-color: #ffffff;">
         <MudText Typo="Typo.h5" Class="mb-2" Style="font-weight: 800; color: #212529;">Adaugă Pachet</MudText>
         <MudText Typo="Typo.body2" Class="mb-6" Style="color: #6b7280;">Creează un nou pachet surpriză pentru clienți.</MudText>
 
@@ -26,18 +40,16 @@
             
             <MudNumericField @bind-Value="PackageAddModel.Price" Label="Preț" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" Class="mb-4" />
 
-            <MudGrid Spacing="2" Class="mb-4">
-                <MudItem xs="6">
-                    <MudText Typo="Typo.caption" Class="mb-1">Pickup Start</MudText>
-                    <InputDate @bind-Value="PackageAddModel.StartPickup" Type="InputDateType.DateTimeLocal" class="form-control" />
+            <MudGrid Spacing="3" Class="mb-4">
+                <MudItem xs="12" md="6">
+                    <MudTextField @bind-Value="PackageAddModel.StartPickup" Format="s" InputType="InputType.DateTimeLocal" Label="Pickup Start" Variant="Variant.Outlined" Required="true" />
                 </MudItem>
-                <MudItem xs="6">
-                    <MudText Typo="Typo.caption" Class="mb-1">Pickup End</MudText>
-                    <InputDate @bind-Value="PackageAddModel.EndPickup" Type="InputDateType.DateTimeLocal" class="form-control" />
+                <MudItem xs="12" md="6">
+                    <MudTextField @bind-Value="PackageAddModel.EndPickup" Format="s" InputType="InputType.DateTimeLocal" Label="Pickup End" Variant="Variant.Outlined" Required="true" />
                 </MudItem>
             </MudGrid>
 
-            <MudSelect @bind-Value="PackageAddModel.PackageTypeId" Label="Tip Pachet" Variant="Variant.Outlined" Class="mb-6">
+            <MudSelect @bind-Value="PackageAddModel.PackageTypeId" Label="Tip Pachet" Variant="Variant.Outlined" Class="mb-6" AnchorOrigin="Origin.BottomCenter" PopoverClass="solid-dropdown-popover">
                 @if (PackageTypes is not null)
                 {
                     @foreach (var type in PackageTypes)
@@ -47,7 +59,7 @@
                 }
             </MudSelect>
 
-            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Success" FullWidth="true" Size="Size.Large">
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Success" FullWidth="true" Size="Size.Large" Class="mt-2">
                 Creează Pachetul
             </MudButton>
         </EditForm>
@@ -75,28 +87,20 @@
     }
 
     public async Task AddPackageToBusiness()
-{
-    try 
     {
-        // 1. Verificam daca modelul este valid (obligatoriu)
-        var result = await PackageService.AddAsync(BusinessId, PackageAddModel);
-        
-        if (result)
+        try 
         {
-            NavigationManager.NavigateTo($"/business/{BusinessId}");
+            var result = await PackageService.AddAsync(BusinessId, PackageAddModel);
+            if (result)
+            {
+                NavigationManager.NavigateTo($"/business/{BusinessId}");
+            }
         }
-        else
+        catch (Exception ex)
         {
-            // Aici poti adauga un Snackbar de eroare (MudBlazor)
-            Console.WriteLine("Eroare la salvare: Serviciul a returnat false.");
+            Console.WriteLine($"Exceptie fatala: {ex.Message}");
         }
     }
-    catch (Exception ex)
-    {
-        // Aceasta va afisa eroarea in consola browserului (F12)
-        Console.WriteLine($"Exceptie fatala: {ex.Message}");
-    }
-}
 
     private void NavigateBack() => NavigationManager.NavigateTo($"/business/{BusinessId}");
 }

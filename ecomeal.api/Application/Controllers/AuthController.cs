@@ -34,8 +34,8 @@ public class AuthController : ControllerBase
         if (!result.Succeeded)
             return BadRequest(new { Errors = result.Errors.Select(e => e.Description) });
 
-        await _userManager.AddToRoleAsync(user, UserRoles.User);
-
+        await _userManager.AddToRoleAsync(user, UserRoles.Admin);
+        
         return Ok(new { Message = "User registered successfully" });
     }
 

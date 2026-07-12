@@ -23,10 +23,10 @@ public class BusinessService
     }
 
     public async Task<List<BusinessTypeModel>> GetBusinessTypes()
-    {
-        var types = await _http.GetFromJsonAsync<List<BusinessTypeModel>>("api/packagetype"); // Sau ruta ta pentru BusinessTypes
-        return types ?? new List<BusinessTypeModel>();
-    }
+{
+    var types = await _http.GetFromJsonAsync<List<BusinessTypeModel>>("api/businesstype"); 
+    return types ?? new List<BusinessTypeModel>();
+}
 
     public async Task<bool> AddAsync(BusinessAddModel business)
     {
