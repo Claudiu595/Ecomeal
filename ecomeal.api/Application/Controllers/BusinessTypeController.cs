@@ -1,5 +1,4 @@
 using EcoMeal.Api.Infrastructure;
-using EcoMeal.Api.Models; // Asigură-te că namespace-ul pentru DTO-uri este corect
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,20 +6,20 @@ namespace EcoMeal.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PackageTypeController : ControllerBase
+    public class BusinessTypeController : ControllerBase
     {
         private readonly EcoMealDbContext _context;
         
-        public PackageTypeController(EcoMealDbContext context)
+        public BusinessTypeController(EcoMealDbContext context)
         {
             _context = context;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PackageTypeDTO>>> GetAllTypes()
+        public async Task<IActionResult> GetAllTypes()
         {
-            var types = await _context.PackageType
-                .Select(t => new PackageTypeDTO
+            var types = await _context.BusinessType
+                .Select(t => new 
                 {
                     Id = t.Id,
                     Name = t.Name

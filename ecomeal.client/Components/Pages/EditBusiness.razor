@@ -1,8 +1,9 @@
 @page "/business/{Id:int}/edit"
 @using EcoMeal.Client.Models
 @using EcoMeal.Client.Services
+@using MudBlazor
 
-<PageTitle>Edit Business</PageTitle>
+<PageTitle>Editare Afacere</PageTitle>
 
 <style>
     .solid-dropdown-popover {
@@ -18,11 +19,16 @@
     }
 </style>
 
+@if (!string.IsNullOrEmpty(ErrorMessage))
+{
+    <MudAlert Severity="Severity.Error" Class="mb-4">@ErrorMessage</MudAlert>
+}
+
 <MudContainer MaxWidth="MaxWidth.Small" Class="py-8">
     <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack"
                Style="text-transform: none; color: #000; font-weight: 600; margin-bottom: 1rem;"
                OnClick="NavigateBack">
-        Back to Business
+        Înapoi la afacere
     </MudButton>
 
     @if (IsLoading)
@@ -31,35 +37,35 @@
             <MudProgressCircular Indeterminate="true" Color="MudBlazor.Color.Dark" />
         </MudPaper>
     }
-    else if (Model is null)
+    else if (Model is null && string.IsNullOrEmpty(ErrorMessage))
     {
-        <MudAlert Severity="Severity.Error">Business not found.</MudAlert>
+        <MudAlert Severity="Severity.Warning">Afacerea nu a fost găsită.</MudAlert>
     }
-    else
+    else if (Model is not null)
     {
         <MudPaper Class="pa-8 rounded-xl" Elevation="0" Style="border: 1px solid #f0f0f0;">
-            <MudText Typo="Typo.h5" Style="font-weight: 800; margin-bottom: 0.5rem;">Edit Business</MudText>
-            <MudText Typo="Typo.body2" Style="color: #6b7280; margin-bottom: 2rem;">Update the business details below.</MudText>
+            <MudText Typo="Typo.h5" Style="font-weight: 800; margin-bottom: 0.5rem;">Editare Afacere</MudText>
+            <MudText Typo="Typo.body2" Style="color: #6b7280; margin-bottom: 2rem;">Actualizează detaliile afacerii mai jos.</MudText>
 
             <EditForm Model="Model" OnValidSubmit="HandleSubmit">
                 <DataAnnotationsValidator />
 
                 <MudTextField @bind-Value="Model.Name"
-                              Label="Business Name"
+                              Label="Nume Afacere"
                               Variant="Variant.Outlined"
                               Class="mb-4"
                               Required="true"
-                              RequiredError="Name is required" />
+                              RequiredError="Numele este obligatoriu" />
 
                 <MudTextField @bind-Value="Model.Address"
-                              Label="Address"
+                              Label="Adresă"
                               Variant="Variant.Outlined"
                               Class="mb-4"
                               Required="true"
-                              RequiredError="Address is required" />
+                              RequiredError="Adresa este obligatorie" />
 
                 <MudTextField @bind-Value="Model.Description"
-                              Label="Description"
+                              Label="Descriere"
                               Variant="Variant.Outlined"
                               Lines="3"
                               Class="mb-4" />
@@ -69,14 +75,14 @@
                               Variant="Variant.Outlined"
                               Class="mb-4"
                               Required="true"
-                              RequiredError="Contact is required" />
+                              RequiredError="Contactul este obligatoriu" />
 
                 <MudSelect @bind-Value="Model.BusinessTypeId"
-                           Label="Business Type"
+                           Label="Tip Afacere"
                            Variant="Variant.Outlined"
                            Class="mb-6"
                            Required="true"
-                           RequiredError="Please select a business type"
+                           RequiredError="Te rog selectează un tip de afacere"
                            AnchorOrigin="Origin.BottomCenter"
                            PopoverClass="solid-dropdown-popover">
                 @if (BusinessTypes is not null)
@@ -93,14 +99,14 @@
                                Variant="Variant.Filled"
                                Style="background: #000; color: #fff; text-transform: none; font-weight: 700; flex: 1;"
                                Size="MudBlazor.Size.Large">
-                        Save Changes
+                        Salvează Modificările
                     </MudButton>
                     <MudButton Variant="Variant.Outlined"
-                               Color="MudBlazor.Color.Error"
+                               Color="Color.Error"
                                Style="text-transform: none; font-weight: 600;"
                                Size="MudBlazor.Size.Large"
                                OnClick="HandleDelete">
-                        Delete
+                        Șterge
                     </MudButton>
                 </MudStack>
             </EditForm>
@@ -114,51 +120,85 @@
 
     [Inject]
     public required BusinessService BusinessService { get; set; }
+    
     [Inject]
     public required NavigationManager NavigationManager { get; set; }
 
     private BusinessAddModel? Model;
     private List<BusinessTypeModel>? BusinessTypes;
     private bool IsLoading = true;
+    private string? ErrorMessage;
 
     protected override async Task OnInitializedAsync()
     {
-        var typesTask = BusinessService.GetBusinessTypes();
-        var existing = await BusinessService.GetOneById(Id);
-        BusinessTypes = await typesTask;
-
-        if (existing is not null)
+        try
         {
-            Model = new BusinessAddModel
-            {
-                Name = existing.Name,
-                Address = existing.Address,
-                Description = existing.Description,
-                Contact = existing.Contact,
-                BusinessTypeId = BusinessTypes?.FirstOrDefault(t => t.Name == existing.BusinessTypeName)?.Id ?? 1
-            };
-        }
+            var typesTask = BusinessService.GetBusinessTypes();
+            var existing = await BusinessService.GetOneById(Id);
+            
+            BusinessTypes = await typesTask;
 
-        IsLoading = false;
+            if (existing is not null)
+            {
+                Model = new BusinessAddModel
+                {
+                    Name = existing.Name,
+                    Address = existing.Address,
+                    Description = existing.Description,
+                    Contact = existing.Contact,
+                    BusinessTypeId = BusinessTypes?.FirstOrDefault(t => t.Name == existing.BusinessTypeName)?.Id ?? 1
+                };
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Eroare la încărcarea datelor: {ex.Message}";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
     }
 
     private async Task HandleSubmit()
     {
         if (Model is null) return;
 
-        var success = await BusinessService.EditAsync(Id, Model);
-        if (success)
+        try
         {
-            NavigationManager.NavigateTo($"/business/{Id}");
+            var success = await BusinessService.EditAsync(Id, Model);
+            if (success)
+            {
+                NavigationManager.NavigateTo($"/business/{Id}");
+            }
+            else
+            {
+                ErrorMessage = "Eroare la salvarea afacerii pe server.";
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Excepție la salvare: {ex.Message}";
         }
     }
 
     private async Task HandleDelete()
     {
-        var success = await BusinessService.DeleteAsync(Id);
-        if (success)
+        try
         {
-            NavigationManager.NavigateTo("/");
+            var success = await BusinessService.DeleteAsync(Id);
+            if (success)
+            {
+                NavigationManager.NavigateTo("/");
+            }
+            else
+            {
+                ErrorMessage = "Eroare la ștergerea afacerii.";
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Excepție la ștergere: {ex.Message}";
         }
     }
 

@@ -2,13 +2,11 @@ C:\Users\Admin\Desktop\ecomeal\ecomeal.api\bin\Debug\net10.0\appsettings.Develop
 C:\Users\Admin\Desktop\ecomeal\ecomeal.api\bin\Debug\net10.0\appsettings.json
 C:\Users\Admin\Desktop\ecomeal\ecomeal.api\bin\Debug\net10.0\ecomeal.api.staticwebassets.endpoints.json
 C:\Users\Admin\Desktop\ecomeal\ecomeal.api\bin\Debug\net10.0\ecomeal.api.exe
-C:\Users\Admin\Desktop\ecomeal\ecomeal.api\bin\Debug\net10.0\ecomeal.api.deps.json
-C:\Users\Admin\Desktop\ecomeal\ecomeal.api\bin\Debug\net10.0\ecomeal.api.runtimeconfig.json
-C:\Users\Admin\Desktop\ecomeal\ecomeal.api\bin\Debug\net10.0\ecomeal.api.dll
-C:\Users\Admin\Desktop\ecomeal\ecomeal.api\bin\Debug\net10.0\ecomeal.api.pdb
 C:\Users\Admin\Desktop\ecomeal\ecomeal.api\bin\Debug\net10.0\Azure.Core.dll
 C:\Users\Admin\Desktop\ecomeal\ecomeal.api\bin\Debug\net10.0\Azure.Identity.dll
 C:\Users\Admin\Desktop\ecomeal\ecomeal.api\bin\Debug\net10.0\Humanizer.dll
+C:\Users\Admin\Desktop\ecomeal\ecomeal.api\bin\Debug\net10.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\Admin\Desktop\ecomeal\ecomeal.api\bin\Debug\net10.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
 C:\Users\Admin\Desktop\ecomeal\ecomeal.api\bin\Debug\net10.0\Microsoft.AspNetCore.OpenApi.dll
 C:\Users\Admin\Desktop\ecomeal\ecomeal.api\bin\Debug\net10.0\Microsoft.Bcl.AsyncInterfaces.dll
 C:\Users\Admin\Desktop\ecomeal\ecomeal.api\bin\Debug\net10.0\Microsoft.Bcl.Cryptography.dll
@@ -156,7 +154,9 @@ C:\Users\Admin\Desktop\ecomeal\ecomeal.api\obj\Debug\net10.0\ecomeal..37C9A04F.U
 C:\Users\Admin\Desktop\ecomeal\ecomeal.api\obj\Debug\net10.0\ecomeal.api.dll
 C:\Users\Admin\Desktop\ecomeal\ecomeal.api\obj\Debug\net10.0\refint\ecomeal.api.dll
 C:\Users\Admin\Desktop\ecomeal\ecomeal.api\obj\Debug\net10.0\ecomeal.api.pdb
+C:\Users\Admin\Desktop\ecomeal\ecomeal.api\bin\Debug\net10.0\ecomeal.api.deps.json
+C:\Users\Admin\Desktop\ecomeal\ecomeal.api\bin\Debug\net10.0\ecomeal.api.runtimeconfig.json
+C:\Users\Admin\Desktop\ecomeal\ecomeal.api\bin\Debug\net10.0\ecomeal.api.dll
+C:\Users\Admin\Desktop\ecomeal\ecomeal.api\bin\Debug\net10.0\ecomeal.api.pdb
 C:\Users\Admin\Desktop\ecomeal\ecomeal.api\obj\Debug\net10.0\ecomeal.api.genruntimeconfig.cache
 C:\Users\Admin\Desktop\ecomeal\ecomeal.api\obj\Debug\net10.0\ref\ecomeal.api.dll
-C:\Users\Admin\Desktop\ecomeal\ecomeal.api\bin\Debug\net10.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
-C:\Users\Admin\Desktop\ecomeal\ecomeal.api\bin\Debug\net10.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll

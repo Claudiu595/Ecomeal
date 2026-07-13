@@ -2,10 +2,11 @@
 @using EcoMeal.Client.Models
 @using EcoMeal.Client.Services
 @using MudBlazor
+
 @inject PackageService PackageService
 @inject NavigationManager NavigationManager
 
-<PageTitle>Add Package</PageTitle>
+<PageTitle>Adaugă Pachet</PageTitle>
 
 <style>
     .solid-dropdown-popover {
@@ -14,12 +15,17 @@
         box-shadow: 0px 4px 12px rgba(0,0,0,0.15) !important;
     }
     .solid-dropdown-popover .mud-list-item-text {
-        color: #212529 !important; /* Text negru/închis */
+        color: #212529 !important;
     }
     .solid-dropdown-popover .mud-list-item:hover {
-        background-color: #f1f1f1 !important; /* Culoare ușor gri la hover */
+        background-color: #f1f1f1 !important;
     }
 </style>
+
+@if (!string.IsNullOrEmpty(ErrorMessage))
+{
+    <MudAlert Severity="Severity.Error" Class="mb-4">@ErrorMessage</MudAlert>
+}
 
 <MudContainer MaxWidth="MaxWidth.Small" Class="py-8">
     <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack"
@@ -28,42 +34,57 @@
         Înapoi la afacere
     </MudButton>
 
-    <MudPaper Class="pa-8 rounded-xl shadow-sm" Elevation="0" Style="border: 1px solid #e0e0e0; background-color: #ffffff;">
-        <MudText Typo="Typo.h5" Class="mb-2" Style="font-weight: 800; color: #212529;">Adaugă Pachet</MudText>
-        <MudText Typo="Typo.body2" Class="mb-6" Style="color: #6b7280;">Creează un nou pachet surpriză pentru clienți.</MudText>
+    @if (IsLoading)
+    {
+        <div class="d-flex justify-content-center">
+            <MudProgressCircular Indeterminate="true" Color="Color.Success" />
+        </div>
+    }
+    else
+    {
+        <MudPaper Class="pa-8 rounded-xl shadow-sm" Elevation="0" Style="border: 1px solid #e0e0e0; background-color: #ffffff;">
+            <MudText Typo="Typo.h5" Class="mb-2" Style="font-weight: 800; color: #212529;">Adaugă Pachet</MudText>
+            <MudText Typo="Typo.body2" Class="mb-6" Style="color: #6b7280;">Creează un nou pachet surpriză pentru clienți.</MudText>
 
-        <EditForm Model="PackageAddModel" OnValidSubmit="AddPackageToBusiness">
-            <DataAnnotationsValidator />
+            <EditForm Model="PackageAddModel" OnValidSubmit="AddPackageToBusiness">
+                <DataAnnotationsValidator />
 
-            <MudTextField @bind-Value="PackageAddModel.Name" Label="Nume Pachet" Variant="Variant.Outlined" Class="mb-4" Required="true" />
-            <MudTextField @bind-Value="PackageAddModel.Description" Label="Descriere" Variant="Variant.Outlined" Lines="3" Class="mb-4" />
-            
-            <MudNumericField @bind-Value="PackageAddModel.Price" Label="Preț" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" Class="mb-4" />
+                <MudTextField @bind-Value="PackageAddModel.Name" Label="Nume Pachet" Variant="Variant.Outlined" Class="mb-4" Required="true" />
+                <MudTextField @bind-Value="PackageAddModel.Description" Label="Descriere" Variant="Variant.Outlined" Lines="3" Class="mb-4" />
+                
+                <MudNumericField @bind-Value="PackageAddModel.Price" Label="Preț" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" Class="mb-4" />
 
-            <MudGrid Spacing="3" Class="mb-4">
-                <MudItem xs="12" md="6">
-                    <MudTextField @bind-Value="PackageAddModel.StartPickup" Format="s" InputType="InputType.DateTimeLocal" Label="Pickup Start" Variant="Variant.Outlined" Required="true" />
-                </MudItem>
-                <MudItem xs="12" md="6">
-                    <MudTextField @bind-Value="PackageAddModel.EndPickup" Format="s" InputType="InputType.DateTimeLocal" Label="Pickup End" Variant="Variant.Outlined" Required="true" />
-                </MudItem>
-            </MudGrid>
+                <MudGrid Spacing="3" Class="mb-4">
+                    <MudItem xs="12" md="6">
+                        <MudTextField @bind-Value="PackageAddModel.StartPickup" Format="s" InputType="InputType.DateTimeLocal" Label="Pickup Start" Variant="Variant.Outlined" Required="true" />
+                    </MudItem>
+                    <MudItem xs="12" md="6">
+                        <MudTextField @bind-Value="PackageAddModel.EndPickup" Format="s" InputType="InputType.DateTimeLocal" Label="Pickup End" Variant="Variant.Outlined" Required="true" />
+                    </MudItem>
+                </MudGrid>
 
-            <MudSelect @bind-Value="PackageAddModel.PackageTypeId" Label="Tip Pachet" Variant="Variant.Outlined" Class="mb-6" AnchorOrigin="Origin.BottomCenter" PopoverClass="solid-dropdown-popover">
-                @if (PackageTypes is not null)
-                {
-                    @foreach (var type in PackageTypes)
+                <MudSelect @bind-Value="PackageAddModel.PackageTypeId" 
+                           Label="Tip Pachet" 
+                           Variant="Variant.Outlined" 
+                           Class="mb-6" 
+                           AnchorOrigin="Origin.BottomCenter" 
+                           PopoverClass="solid-dropdown-popover"
+                           Required="true">
+                    @if (PackageTypes is not null)
                     {
-                        <MudSelectItem Value="type.Id">@type.Name</MudSelectItem>
+                        @foreach (var type in PackageTypes)
+                        {
+                            <MudSelectItem Value="type.Id">@type.Name</MudSelectItem>
+                        }
                     }
-                }
-            </MudSelect>
+                </MudSelect>
 
-            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Success" FullWidth="true" Size="Size.Large" Class="mt-2">
-                Creează Pachetul
-            </MudButton>
-        </EditForm>
-    </MudPaper>
+                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Success" FullWidth="true" Size="Size.Large" Class="mt-2">
+                    Creează Pachetul
+                </MudButton>
+            </EditForm>
+        </MudPaper>
+    }
 </MudContainer>
 
 @code {
@@ -80,14 +101,28 @@
     };
 
     private List<PackageTypeModel>? PackageTypes;
+    private bool IsLoading = true;
+    private string? ErrorMessage;
 
     protected override async Task OnInitializedAsync()
     {
-        PackageTypes = await PackageService.GetPackageTypes();
+        try
+        {
+            PackageTypes = await PackageService.GetPackageTypes();
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Nu am putut încărca tipurile de pachete: {ex.Message}";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
     }
 
     public async Task AddPackageToBusiness()
     {
+        ErrorMessage = null;
         try 
         {
             var result = await PackageService.AddAsync(BusinessId, PackageAddModel);
@@ -95,10 +130,14 @@
             {
                 NavigationManager.NavigateTo($"/business/{BusinessId}");
             }
+            else
+            {
+                ErrorMessage = "A apărut o eroare la salvarea pachetului pe server.";
+            }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Exceptie fatala: {ex.Message}");
+            ErrorMessage = $"Excepție la salvare: {ex.Message}";
         }
     }
 

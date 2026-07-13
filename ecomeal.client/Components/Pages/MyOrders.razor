@@ -1,0 +1,54 @@
+@page "/my-orders"
+@using EcoMeal.Client.Models
+@using EcoMeal.Client.Services
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Authorization
+@using MudBlazor
+@inject OrderService OrderService
+
+@attribute [Authorize(Roles = "User")]
+
+<PageTitle>Comenzile Mele</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Medium" Class="py-8">
+    <MudText Typo="Typo.h4" Style="font-weight: 800; color: #212529;" Class="mb-6">Comenzile Mele</MudText>
+
+    @if (Orders == null)
+    {
+        <MudProgressCircular Indeterminate="true" Color="Color.Success" />
+    }
+    else if (!Orders.Any())
+    {
+        <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">Nu ai plasat nicio comandă până acum.</MudAlert>
+    }
+    else
+    {
+        <MudTable Items="@Orders" Hover="true" Elevation="1" Class="rounded-xl">
+            <HeaderContent>
+                <MudTh>Data</MudTh>
+                <MudTh>Afacere</MudTh>
+                <MudTh>Pachet</MudTh>
+                <MudTh>Preț</MudTh>
+                <MudTh>Status</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Data">@context.Date.ToString("dd/MM/yyyy HH:mm")</MudTd>
+                <MudTd DataLabel="Afacere">@context.BusinessName</MudTd>
+                <MudTd DataLabel="Pachet">@context.PackageName</MudTd>
+                <MudTd DataLabel="Preț">@context.Price Lei</MudTd>
+                <MudTd DataLabel="Status">
+                    <MudChip T="string" Color="Color.Success" Size="Size.Small">@context.Status</MudChip>
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+    }
+</MudContainer>
+
+@code {
+    private List<OrderGetModel>? Orders;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Orders = await OrderService.GetMyOrdersAsync();
+    }
+}

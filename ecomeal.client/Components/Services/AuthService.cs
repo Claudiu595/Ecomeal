@@ -68,6 +68,8 @@ public class AuthService
     }
 
     public async Task LoadTokenAsync()
+{
+    try
     {
         var tokenResult = await _localStorage.GetAsync<string>("authToken");
         Token = tokenResult.Success ? tokenResult.Value : null;
@@ -83,6 +85,14 @@ public class AuthService
             }
         }
     }
+    catch (System.Security.Cryptography.CryptographicException)
+    {
+        // Tratăm eroarea de decriptare prin delogare forțată, fără a crăpa circuitul
+        Token = null;
+        await _localStorage.DeleteAsync("authToken");
+        await _localStorage.DeleteAsync("userRoles");
+    }
+}
 
     public async Task LogoutAsync()
     {

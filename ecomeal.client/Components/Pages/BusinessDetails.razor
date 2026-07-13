@@ -3,8 +3,10 @@
 @using EcoMeal.Client.Services
 @using Microsoft.AspNetCore.Components.Authorization
 @using MudBlazor
+
 @inject BusinessService BusinessService
 @inject PackageService PackageService
+@inject OrderService OrderService
 @inject ISnackbar Snackbar
 
 @if (Business == null)
@@ -37,7 +39,7 @@ else
             
             <AuthorizeView Roles="Admin">
                 <Authorized>
-                    <MudButton Variant="Variant.Filled" Color="Color.Success" StartIcon="@Icons.Material.Filled.Add" Href="@($"/business/{Id}/package/add")">
+                    <MudButton Variant="Variant.Filled" Color="Color.Success" StartIcon="@Icons.Material.Filled.Add" Href="@("/business/" + Id + "/package/add")">
                         Adaugă Pachet
                     </MudButton>
                 </Authorized>
@@ -62,18 +64,29 @@ else
                                     </div>
                                 </CardHeaderActions>
                             </MudCardHeader>
+                            
                             <MudCardContent Class="flex-grow-1">
                                 <MudText Typo="Typo.body2" Class="mb-3" Style="color: #f1f8e9;">@pkg.Description</MudText>
+                                
                                 <div style="font-size: 0.85rem; background-color: rgba(255, 255, 255, 0.2); padding: 10px; border-radius: 8px;">
                                     <div><strong style="color: white;">Start:</strong> @pkg.PickUpStart.ToString("dd/MM/yyyy HH:mm")</div>
                                     <div class="mt-1"><strong style="color: white;">End:</strong> @pkg.PickUpEnd.ToString("dd/MM/yyyy HH:mm")</div>
                                 </div>
                             </MudCardContent>
+                            
                             <MudCardActions Class="justify-end pb-4 pe-4">
                                 <AuthorizeView Roles="Admin">
                                     <Authorized Context="adminAuth">
-                                        <MudButton Variant="Variant.Filled" Style="background-color: white; color: #35c022; font-weight: 600;" Size="Size.Small" Href="@($"/business/{Id}/editPackage/{pkg.Id}")" Class="me-2">Edit</MudButton>
+                                        <MudButton Variant="Variant.Filled" Style="background-color: white; color: #35c022; font-weight: 600;" Size="Size.Small" Href="@("/business/" + Id + "/editPackage/" + pkg.Id)" Class="me-2">Edit</MudButton>
                                         <MudButton Variant="Variant.Filled" Color="Color.Error" Size="Size.Small" OnClick="@(() => HandleDeletePackage(pkg.Id))">Delete</MudButton>
+                                    </Authorized>
+                                </AuthorizeView>
+
+                                <AuthorizeView Roles="User">
+                                    <Authorized Context="userAuth">
+                                        <MudButton Variant="Variant.Filled" Style="background-color: white; color: #35c022; font-weight: 600;" Size="Size.Small" OnClick="@(() => HandlePlaceOrder(pkg.Id))">
+                                            Rezervă
+                                        </MudButton>
                                     </Authorized>
                                 </AuthorizeView>
                             </MudCardActions>
@@ -120,6 +133,26 @@ else
         else
         {
             Snackbar.Add("Eroare la ștergerea pachetului.", Severity.Error);
+        }
+    }
+
+    private async Task HandlePlaceOrder(int packageId)
+    {
+        try
+        {
+            var success = await OrderService.PlaceOrderAsync(packageId);
+            if (success)
+            {
+                Snackbar.Add("Comanda a fost plasată cu succes!", Severity.Success);
+            }
+            else
+            {
+                Snackbar.Add("Eroare: API-ul a respins comanda (posibil 401 Unauthorized sau 500).", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Excepție: {ex.Message}", Severity.Error);
         }
     }
 }
