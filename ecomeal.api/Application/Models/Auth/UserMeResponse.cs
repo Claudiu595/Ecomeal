@@ -1,4 +1,4 @@
-namespace EcoMeal.Api.Application.Models.Auth;
+namespace EcoMeal.Api.Models.Auth;
 
 public class UserMeResponse
 {

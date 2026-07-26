@@ -1,7 +1,8 @@
-namespace EcoMeal.Api.Application.Constants;
-
-public static class UserRoles
+namespace EcoMeal.Api.Constants
 {
-    public const string Admin = "Admin";
-    public const string User = "User";
+    public class UserRoles
+    {
+        public const string Admin = "Admin";
+        public const string User = "User";
+    }
 }

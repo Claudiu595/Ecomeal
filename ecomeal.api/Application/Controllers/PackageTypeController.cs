@@ -1,5 +1,5 @@
 using EcoMeal.Api.Infrastructure;
-using EcoMeal.Api.Models; // Asigură-te că namespace-ul pentru DTO-uri este corect
+using EcoMeal.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,7 +10,6 @@ namespace EcoMeal.Api.Controllers
     public class PackageTypeController : ControllerBase
     {
         private readonly EcoMealDbContext _context;
-        
         public PackageTypeController(EcoMealDbContext context)
         {
             _context = context;

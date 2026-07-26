@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EcoMeal.Api.Entities
 {
@@ -7,11 +7,15 @@ namespace EcoMeal.Api.Entities
         public int Id { get; set; }
         public required string Name { get; set; }
         public required string Address { get; set; }
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
         public string? Description { get; set; }
         public required string Contact { get; set; }
         [ForeignKey(nameof(BusinessType))]
         public int BusinessTypeId { get; set; }
         public required BusinessType BusinessType { get; set; }
-        public ICollection<Package> Packages { get; set; } = new List<Package>(); 
+        public string? BusinessImageUrl { get; set; }
+        public ICollection<Package> Packages { get; set; } = new List<Package>();
+        public ICollection<User> FavoritedByUsers { get; set; } = new List<User>();
     }
 }

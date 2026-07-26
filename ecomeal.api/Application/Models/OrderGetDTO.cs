@@ -3,11 +3,16 @@ namespace EcoMeal.Api.Models
     public class OrderGetDTO
     {
         public int Id { get; set; }
-        public DateTime Date { get; set; }
-        public string Status { get; set; } = string.Empty;
+        public string PackageName { get; set; }
+        public string Status { get; set; }
         public decimal Price { get; set; }
         public int BusinessId { get; set; }
-        public string BusinessName { get; set; } = string.Empty;
-        public string PackageName { get; set; } = string.Empty;
+        public string BusinessName { get; set; }
+        public DateTime Date { get; set; }
+        public string? UserName { get; set; }
+        public string? UserContact { get; set; }
+        public bool IsReviewed { get; set; }
+        public int? ReviewRating { get; set; }
+        public string? ReviewComment { get; set; }
     }
 }
