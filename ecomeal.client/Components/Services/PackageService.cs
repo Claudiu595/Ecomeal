@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net.Http.Json;
 using EcoMeal.Client.Models;
 
@@ -32,13 +33,15 @@ public class PackageService
 
     public async Task<bool> AddAsync(int businessId, PackageAddModel package)
     {
-        var response = await _http.PostAsJsonAsync($"api/business/{businessId}/package", package);
+        using var content = BuildFormContent(package);
+        var response = await _http.PostAsync($"api/business/{businessId}/package", content);
         return response.IsSuccessStatusCode;
     }
 
     public async Task<bool> EditAsync(int businessId, int packageId, PackageAddModel package)
     {
-        var response = await _http.PutAsJsonAsync($"api/business/{businessId}/package/{packageId}", package);
+        using var content = BuildFormContent(package);
+        var response = await _http.PutAsync($"api/business/{businessId}/package/{packageId}", content);
         return response.IsSuccessStatusCode;
     }
 
@@ -46,5 +49,21 @@ public class PackageService
     {
         var response = await _http.DeleteAsync($"api/business/{businessId}/package/{packageId}");
         return response.IsSuccessStatusCode;
+    }
+
+    private static FormUrlEncodedContent BuildFormContent(PackageAddModel package)
+    {
+        var fields = new List<KeyValuePair<string, string>>
+        {
+            new(nameof(package.Name), package.Name),
+            new(nameof(package.Description), package.Description),
+            new(nameof(package.Price), package.Price.ToString(CultureInfo.InvariantCulture)),
+            new(nameof(package.NoPackages), package.NoPackages.ToString(CultureInfo.InvariantCulture)),
+            new("StartPickup", package.StartPickup.ToString("o", CultureInfo.InvariantCulture)),
+            new("EndPickup", package.EndPickup.ToString("o", CultureInfo.InvariantCulture)),
+            new(nameof(package.PackageTypeId), package.PackageTypeId.ToString(CultureInfo.InvariantCulture))
+        };
+
+        return new FormUrlEncodedContent(fields);
     }
 }

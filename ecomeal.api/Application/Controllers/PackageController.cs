@@ -1,7 +1,9 @@
+using EcoMeal.Api.Constants;
 using EcoMeal.Api.Entities;
 using EcoMeal.Api.Infrastructure;
 using EcoMeal.Api.Models;
 using EcoMeal.Api.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,6 +23,7 @@ namespace EcoMeal.Api.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = UserRoles.Admin)]
         public async Task<IActionResult> AddPackageToBusiness(int id, [FromForm] PackageAddDTO package)
         {
             string? imageUrl = null;
@@ -37,7 +40,9 @@ namespace EcoMeal.Api.Controllers
                 PickUpStart = package.StartPickup,
                 PickUpEnd = package.EndPickup,
                 PackageTypeId = package.PackageTypeId,
+                PackageType = null!,
                 BusinessId = id,
+                Business = null!,
                 PackageImageUrl = imageUrl
             });
 
@@ -46,6 +51,7 @@ namespace EcoMeal.Api.Controllers
         }
 
         [HttpDelete("{PackageId}")]
+        [Authorize(Roles = UserRoles.Admin)]
         public async Task<ActionResult> DeletePackage(int PackageId)
         {
             /*int count = await _context.Package.Where(p => p.Id == PackageId).ExecuteDeleteAsync();
@@ -68,6 +74,7 @@ namespace EcoMeal.Api.Controllers
         }
 
         [HttpPut("{PackageId}")]
+        [Authorize(Roles = UserRoles.Admin)]
         public async Task<IActionResult> EditPackage(int PackageId, [FromForm] PackageAddDTO package)
         {
             var existingPackage = await _context.Package.FirstOrDefaultAsync(p => p.Id == PackageId);

@@ -1,7 +1,9 @@
 @page "/business/{Id:int}/edit"
 @using EcoMeal.Client.Models
 @using EcoMeal.Client.Services
+@using Microsoft.AspNetCore.Authorization
 @using MudBlazor
+@attribute [Authorize(Roles = "Admin")]
 
 <PageTitle>Editare Afacere</PageTitle>
 
@@ -98,13 +100,15 @@
                     <MudButton ButtonType="ButtonType.Submit"
                                Variant="Variant.Filled"
                                Style="background: #000; color: #fff; text-transform: none; font-weight: 700; flex: 1;"
-                               Size="MudBlazor.Size.Large">
-                        Salvează Modificările
+                               Size="MudBlazor.Size.Large"
+                               Disabled="@IsBusy">
+                        @(IsBusy ? "Se procesează..." : "Salvează Modificările")
                     </MudButton>
                     <MudButton Variant="Variant.Outlined"
                                Color="Color.Error"
                                Style="text-transform: none; font-weight: 600;"
                                Size="MudBlazor.Size.Large"
+                               Disabled="@IsBusy"
                                OnClick="HandleDelete">
                         Șterge
                     </MudButton>
@@ -127,6 +131,7 @@
     private BusinessAddModel? Model;
     private List<BusinessTypeModel>? BusinessTypes;
     private bool IsLoading = true;
+    private bool IsBusy;
     private string? ErrorMessage;
 
     protected override async Task OnInitializedAsync()
@@ -135,7 +140,7 @@
         {
             var typesTask = BusinessService.GetBusinessTypes();
             var existing = await BusinessService.GetOneById(Id);
-            
+
             BusinessTypes = await typesTask;
 
             if (existing is not null)
@@ -162,8 +167,10 @@
 
     private async Task HandleSubmit()
     {
-        if (Model is null) return;
+        if (Model is null || IsBusy) return;
 
+        IsBusy = true;
+        ErrorMessage = null;
         try
         {
             var success = await BusinessService.EditAsync(Id, Model);
@@ -180,10 +187,18 @@
         {
             ErrorMessage = $"Excepție la salvare: {ex.Message}";
         }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
     private async Task HandleDelete()
     {
+        if (IsBusy) return;
+
+        IsBusy = true;
+        ErrorMessage = null;
         try
         {
             var success = await BusinessService.DeleteAsync(Id);
@@ -199,6 +214,10 @@
         catch (Exception ex)
         {
             ErrorMessage = $"Excepție la ștergere: {ex.Message}";
+        }
+        finally
+        {
+            IsBusy = false;
         }
     }
 

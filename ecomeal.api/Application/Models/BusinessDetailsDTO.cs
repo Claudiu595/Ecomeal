@@ -2,6 +2,6 @@ namespace EcoMeal.Api.Models
 {
     public class BusinessDetailsDTO : BusinessDTO
     {
-        public IEnumerable<PackageDTO> Packages { get; set; }
+        public required IEnumerable<PackageDTO> Packages { get; set; }
     }
 }

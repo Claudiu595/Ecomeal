@@ -1,7 +1,9 @@
 @page "/business/{BusinessId:int}/editPackage/{PackageId:int}"
 @using EcoMeal.Client.Models
 @using EcoMeal.Client.Services
+@using Microsoft.AspNetCore.Authorization
 @using MudBlazor
+@attribute [Authorize(Roles = "Admin")]
 
 <PageTitle>Editare Pachet</PageTitle>
 
@@ -68,7 +70,13 @@
                                  Variant="Variant.Outlined"
                                  Adornment="Adornment.Start"
                                  AdornmentIcon="@Icons.Material.Filled.AttachMoney"
-                                 Min="0.01"
+                                 Min="0.01m"
+                                 Class="mb-4" />
+
+                <MudNumericField @bind-Value="PackageEditModel.NoPackages"
+                                 Label="Număr de pachete disponibile"
+                                 Variant="Variant.Outlined"
+                                 Min="1"
                                  Class="mb-4" />
 
                 <MudGrid Spacing="3" Class="mb-4">
@@ -112,13 +120,15 @@
                                Variant="Variant.Filled"
                                Color="Color.Success"
                                Style="font-weight: 700; flex: 1;"
-                               Size="Size.Large">
-                        Salvează
+                               Size="Size.Large"
+                               Disabled="@IsBusy">
+                        @(IsBusy ? "Se procesează..." : "Salvează")
                     </MudButton>
                     <MudButton Variant="Variant.Outlined"
                                Color="Color.Error"
                                Style="font-weight: 600;"
                                Size="Size.Large"
+                               Disabled="@IsBusy"
                                OnClick="DeletePackage">
                         Șterge
                     </MudButton>
@@ -144,6 +154,7 @@
     private PackageAddModel? PackageEditModel;
     private List<PackageTypeModel>? PackageTypes;
     private bool IsLoading = true;
+    private bool IsBusy;
     private string? ErrorMessage;
 
     protected override async Task OnInitializedAsync()
@@ -162,7 +173,8 @@
                 {
                     Name = existing.Name,
                     Description = existing.Description ?? string.Empty,
-                    Price = (double)existing.Price,
+                    Price = existing.Price,
+                    NoPackages = existing.NoPackages,
                     StartPickup = existing.PickUpStart,
                     EndPickup = existing.PickUpEnd,
                     PackageTypeId = PackageTypes?.FirstOrDefault(t => t.Name == existing.PackageTypeName)?.Id ?? 1
@@ -181,29 +193,57 @@
 
     private async Task SaveChanges()
     {
-        if (PackageEditModel is null) return;
+        if (PackageEditModel is null || IsBusy) return;
 
-        var success = await PackageService.EditAsync(BusinessId, PackageId, PackageEditModel);
-        if (success)
+        IsBusy = true;
+        ErrorMessage = null;
+        try
         {
-            NavigationManager.NavigateTo($"/business/{BusinessId}");
+            var success = await PackageService.EditAsync(BusinessId, PackageId, PackageEditModel);
+            if (success)
+            {
+                NavigationManager.NavigateTo($"/business/{BusinessId}");
+            }
+            else
+            {
+                ErrorMessage = "A apărut o eroare la salvarea modificărilor.";
+            }
         }
-        else
+        catch (Exception ex)
         {
-            ErrorMessage = "A apărut o eroare la salvarea modificărilor.";
+            ErrorMessage = $"Excepție la salvare: {ex.Message}";
+        }
+        finally
+        {
+            IsBusy = false;
         }
     }
 
     private async Task DeletePackage()
     {
-        var success = await PackageService.DeleteAsync(BusinessId, PackageId);
-        if (success)
+        if (IsBusy) return;
+
+        IsBusy = true;
+        ErrorMessage = null;
+        try
         {
-            NavigationManager.NavigateTo($"/business/{BusinessId}");
+            var success = await PackageService.DeleteAsync(BusinessId, PackageId);
+            if (success)
+            {
+                NavigationManager.NavigateTo($"/business/{BusinessId}");
+            }
+            else
+            {
+                ErrorMessage = "A apărut o eroare la ștergerea pachetului.";
+            }
         }
-        else
+        catch (Exception ex)
         {
-            ErrorMessage = "A apărut o eroare la ștergerea pachetului.";
+            ErrorMessage = $"Excepție la ștergere: {ex.Message}";
+        }
+        finally
+        {
+            IsBusy = false;
         }
     }
 

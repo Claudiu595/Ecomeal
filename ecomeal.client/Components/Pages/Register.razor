@@ -53,7 +53,9 @@
 
 @code {
     [SupplyParameterFromForm]
-    private RegisterModel registerModel { get; set; } = new();
+    private RegisterModel registerModel { get; set; } = default!;
+
+    protected override void OnInitialized() => registerModel ??= new();
 
     private string? errorMessage;
 

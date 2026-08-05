@@ -1,7 +1,9 @@
 @page "/business/add"
 @using EcoMeal.Client.Models
 @using EcoMeal.Client.Services
+@using Microsoft.AspNetCore.Authorization
 @using MudBlazor
+@attribute [Authorize(Roles = "Admin")]
 @inject BusinessService BusinessService
 @inject NavigationManager NavigationManager
 
@@ -15,6 +17,11 @@
     <MudPaper Class="pa-8 rounded-xl" Elevation="0" Style="border: 1px solid #e0e0e0; background-color: #ffffff;">
         <MudText Typo="Typo.h5" Class="mb-6" Style="font-weight: 700; color: #212529;">Adaugă o afacere nouă</MudText>
 
+        @if (!string.IsNullOrEmpty(ErrorMessage))
+        {
+            <MudAlert Severity="Severity.Error" Class="mb-4">@ErrorMessage</MudAlert>
+        }
+
         <EditForm Model="Model" OnValidSubmit="HandleSubmit">
             <DataAnnotationsValidator />
 
@@ -23,7 +30,7 @@
             <MudTextField @bind-Value="Model.Description" Label="Descriere" Variant="Variant.Outlined" Lines="3" Class="mb-4" />
             <MudTextField @bind-Value="Model.Contact" Label="Contact" Variant="Variant.Outlined" Class="mb-4" Required="true" />
 
-            <MudSelect @bind-Value="Model.BusinessTypeId" Label="Tip Afacere" Variant="Variant.Outlined" Class="mb-6">
+            <MudSelect @bind-Value="Model.BusinessTypeId" Label="Tip Afacere" Variant="Variant.Outlined" Class="mb-4">
                 @if (BusinessTypes != null)
                 {
                     @foreach (var type in BusinessTypes)
@@ -33,8 +40,8 @@
                 }
             </MudSelect>
 
-            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Success" FullWidth="true" Size="Size.Large">
-                Salvează Afacerea
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Success" FullWidth="true" Size="Size.Large" Disabled="@IsSaving">
+                @(IsSaving ? "Se salvează..." : "Salvează Afacerea")
             </MudButton>
         </EditForm>
     </MudPaper>
@@ -43,11 +50,34 @@
 @code {
     public BusinessAddModel Model { get; set; } = new() { Name = "", Address = "", Contact = "", BusinessTypeId = 1 };
     private List<BusinessTypeModel>? BusinessTypes;
+    private bool IsSaving;
+    private string? ErrorMessage;
 
     protected override async Task OnInitializedAsync() => BusinessTypes = await BusinessService.GetBusinessTypes();
 
     private async Task HandleSubmit()
     {
-        if (await BusinessService.AddAsync(Model)) NavigationManager.NavigateTo("/");
+        if (IsSaving) return;
+        IsSaving = true;
+        ErrorMessage = null;
+        try
+        {
+            if (await BusinessService.AddAsync(Model))
+            {
+                NavigationManager.NavigateTo("/");
+            }
+            else
+            {
+                ErrorMessage = "Eroare la salvarea afacerii pe server.";
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Excepție la salvare: {ex.Message}";
+        }
+        finally
+        {
+            IsSaving = false;
+        }
     }
 }

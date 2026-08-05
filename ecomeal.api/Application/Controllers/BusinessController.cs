@@ -211,6 +211,7 @@ namespace EcoMeal.Api.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = UserRoles.Admin)]
         public async Task<IActionResult> AddBusiness([FromForm] BusinessAddDTO business)
         {
             string? imageUrl = null;
@@ -239,6 +240,7 @@ namespace EcoMeal.Api.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = UserRoles.Admin)]
         public async Task<IActionResult> EditBusiness(int id, [FromForm] BusinessAddDTO business)
         {
             var existingBusiness = await _context.Business.FirstOrDefaultAsync(b => b.Id == id);

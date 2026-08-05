@@ -59,12 +59,28 @@ public class AuthService
                 {
                     customProvider.NotifyUserAuthentication(Token, roles);
                 }
+
+                await SendLoginNotificationAsync(Token);
             }
 
             return AuthResult.Ok();
         }
 
         return AuthResult.Fail("Invalid email or password.");
+    }
+
+    private async Task SendLoginNotificationAsync(string token)
+    {
+        try
+        {
+            var requestMessage = new HttpRequestMessage(HttpMethod.Post, "api/auth/login-notification");
+            requestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            await _http.SendAsync(requestMessage);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error sending login notification: {ex.Message}");
+        }
     }
 
     public async Task LoadTokenAsync()

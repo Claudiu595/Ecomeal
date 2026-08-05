@@ -52,7 +52,9 @@ namespace EcoMeal.Api.Controllers
             var review = new Review
             {
                 UserId = userId,
+                User = null!,
                 OrderId = order.Id,
+                Order = order,
                 Rating = request.Rating,
                 Comment = request.Review,
                 CreatedAt = DateTime.UtcNow

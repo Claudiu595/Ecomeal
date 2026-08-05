@@ -36,7 +36,9 @@
 
 @code {
     [SupplyParameterFromForm]
-    private LoginModel loginModel { get; set; } = new();
+    private LoginModel loginModel { get; set; } = default!;
+
+    protected override void OnInitialized() => loginModel ??= new();
 
     private string? errorMessage;
 

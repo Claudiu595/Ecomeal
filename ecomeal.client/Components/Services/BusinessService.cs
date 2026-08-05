@@ -23,20 +23,22 @@ public class BusinessService
     }
 
     public async Task<List<BusinessTypeModel>> GetBusinessTypes()
-{
-    var types = await _http.GetFromJsonAsync<List<BusinessTypeModel>>("api/businesstype"); 
-    return types ?? new List<BusinessTypeModel>();
-}
+    {
+        var types = await _http.GetFromJsonAsync<List<BusinessTypeModel>>("api/businesstype");
+        return types ?? new List<BusinessTypeModel>();
+    }
 
     public async Task<bool> AddAsync(BusinessAddModel business)
     {
-        var response = await _http.PostAsJsonAsync("api/business", business);
+        using var content = BuildFormContent(business);
+        var response = await _http.PostAsync("api/business", content);
         return response.IsSuccessStatusCode;
     }
 
     public async Task<bool> EditAsync(int id, BusinessAddModel business)
     {
-        var response = await _http.PutAsJsonAsync($"api/business/{id}", business);
+        using var content = BuildFormContent(business);
+        var response = await _http.PutAsync($"api/business/{id}", content);
         return response.IsSuccessStatusCode;
     }
 
@@ -44,5 +46,23 @@ public class BusinessService
     {
         var response = await _http.DeleteAsync($"api/business/{id}");
         return response.IsSuccessStatusCode;
+    }
+
+    private static FormUrlEncodedContent BuildFormContent(BusinessAddModel business)
+    {
+        var fields = new List<KeyValuePair<string, string>>
+        {
+            new(nameof(business.Name), business.Name),
+            new(nameof(business.Address), business.Address),
+            new(nameof(business.Contact), business.Contact),
+            new(nameof(business.BusinessTypeId), business.BusinessTypeId.ToString())
+        };
+
+        if (!string.IsNullOrEmpty(business.Description))
+        {
+            fields.Add(new(nameof(business.Description), business.Description));
+        }
+
+        return new FormUrlEncodedContent(fields);
     }
 }

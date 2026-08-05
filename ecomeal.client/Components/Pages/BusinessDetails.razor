@@ -64,16 +64,17 @@ else
                                     </div>
                                 </CardHeaderActions>
                             </MudCardHeader>
-                            
+
                             <MudCardContent Class="flex-grow-1">
                                 <MudText Typo="Typo.body2" Class="mb-3" Style="color: #f1f8e9;">@pkg.Description</MudText>
-                                
+
                                 <div style="font-size: 0.85rem; background-color: rgba(255, 255, 255, 0.2); padding: 10px; border-radius: 8px;">
                                     <div><strong style="color: white;">Start:</strong> @pkg.PickUpStart.ToString("dd/MM/yyyy HH:mm")</div>
                                     <div class="mt-1"><strong style="color: white;">End:</strong> @pkg.PickUpEnd.ToString("dd/MM/yyyy HH:mm")</div>
+                                    <div class="mt-1"><strong style="color: white;">Disponibile:</strong> @pkg.NoPackages</div>
                                 </div>
                             </MudCardContent>
-                            
+
                             <MudCardActions Class="justify-end pb-4 pe-4">
                                 <AuthorizeView Roles="Admin">
                                     <Authorized Context="adminAuth">
@@ -84,8 +85,8 @@ else
 
                                 <AuthorizeView Roles="User">
                                     <Authorized Context="userAuth">
-                                        <MudButton Variant="Variant.Filled" Style="background-color: white; color: #35c022; font-weight: 600;" Size="Size.Small" OnClick="@(() => HandlePlaceOrder(pkg.Id))">
-                                            Rezervă
+                                        <MudButton Variant="Variant.Filled" Style="background-color: white; color: #35c022; font-weight: 600;" Size="Size.Small" Disabled="@(pkg.NoPackages <= 0 || IsPlacingOrder)" OnClick="@(() => HandlePlaceOrder(pkg.Id))">
+                                            @(pkg.NoPackages <= 0 ? "Epuizat" : "Rezervă")
                                         </MudButton>
                                     </Authorized>
                                 </AuthorizeView>
@@ -107,6 +108,8 @@ else
 @code {
     [Parameter] public int Id { get; set; }
     private BusinessDetailsModel? Business;
+    private bool IsPlacingOrder;
+    private bool IsDeletingPackage;
 
     protected override async Task OnInitializedAsync()
     {
@@ -115,44 +118,61 @@ else
 
     private async Task LoadDataAsync()
     {
+        // BusinessDetailsDTO already includes the packages for this business, so a single call is enough.
         Business = await BusinessService.GetOneById(Id);
-        if (Business != null)
-        {
-            Business.Packages = await PackageService.GetByBusinessId(Id);
-        }
     }
 
     private async Task HandleDeletePackage(int packageId)
     {
-        var success = await PackageService.DeleteAsync(Id, packageId);
-        if (success)
-        {
-            Snackbar.Add("Pachetul a fost șters cu succes!", Severity.Success);
-            await LoadDataAsync(); 
-        }
-        else
-        {
-            Snackbar.Add("Eroare la ștergerea pachetului.", Severity.Error);
-        }
-    }
-
-    private async Task HandlePlaceOrder(int packageId)
-    {
+        if (IsDeletingPackage) return;
+        IsDeletingPackage = true;
         try
         {
-            var success = await OrderService.PlaceOrderAsync(packageId);
+            var success = await PackageService.DeleteAsync(Id, packageId);
             if (success)
             {
-                Snackbar.Add("Comanda a fost plasată cu succes!", Severity.Success);
+                Snackbar.Add("Pachetul a fost șters cu succes!", Severity.Success);
+                await LoadDataAsync();
             }
             else
             {
-                Snackbar.Add("Eroare: API-ul a respins comanda (posibil 401 Unauthorized sau 500).", Severity.Error);
+                Snackbar.Add("Eroare la ștergerea pachetului.", Severity.Error);
             }
         }
         catch (Exception ex)
         {
             Snackbar.Add($"Excepție: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            IsDeletingPackage = false;
+        }
+    }
+
+    private async Task HandlePlaceOrder(int packageId)
+    {
+        if (IsPlacingOrder) return;
+        IsPlacingOrder = true;
+        try
+        {
+            var result = await OrderService.PlaceOrderAsync(packageId);
+            if (result.Success)
+            {
+                Snackbar.Add("Comanda a fost plasată cu succes!", Severity.Success);
+                await LoadDataAsync();
+            }
+            else
+            {
+                Snackbar.Add(result.ErrorMessage ?? "Comanda nu a putut fi plasată.", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Excepție: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            IsPlacingOrder = false;
         }
     }
 }

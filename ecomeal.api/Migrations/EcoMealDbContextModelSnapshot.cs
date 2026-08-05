@@ -22,6 +22,21 @@ namespace EcoMeal.Api.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("BusinessUser", b =>
+                {
+                    b.Property<int>("FavoriteBusinessesId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FavoritedByUsersId")
+                        .HasColumnType("int");
+
+                    b.HasKey("FavoriteBusinessesId", "FavoritedByUsersId");
+
+                    b.HasIndex("FavoritedByUsersId");
+
+                    b.ToTable("FavoriteBusiness", (string)null);
+                });
+
             modelBuilder.Entity("EcoMeal.Api.Entities.Business", b =>
                 {
                     b.Property<int>("Id")
@@ -34,6 +49,9 @@ namespace EcoMeal.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("BusinessImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("BusinessTypeId")
                         .HasColumnType("int");
 
@@ -43,6 +61,12 @@ namespace EcoMeal.Api.Migrations
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("float");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -87,9 +111,20 @@ namespace EcoMeal.Api.Migrations
                     b.Property<int>("PackageId")
                         .HasColumnType("int");
 
+                    b.Property<string>("PaymentStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("StockReserved")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -123,6 +158,9 @@ namespace EcoMeal.Api.Migrations
 
                     b.Property<int>("NoPackages")
                         .HasColumnType("int");
+
+                    b.Property<string>("PackageImageUrl")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PackageTypeId")
                         .HasColumnType("int");
@@ -161,6 +199,39 @@ namespace EcoMeal.Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("PackageType");
+                });
+
+            modelBuilder.Entity("EcoMeal.Api.Entities.Review", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Review");
                 });
 
             modelBuilder.Entity("EcoMeal.Api.Entities.User", b =>
@@ -370,6 +441,21 @@ namespace EcoMeal.Api.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("BusinessUser", b =>
+                {
+                    b.HasOne("EcoMeal.Api.Entities.Business", null)
+                        .WithMany()
+                        .HasForeignKey("FavoriteBusinessesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EcoMeal.Api.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("FavoritedByUsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("EcoMeal.Api.Entities.Business", b =>
                 {
                     b.HasOne("EcoMeal.Api.Entities.BusinessType", "BusinessType")
@@ -417,6 +503,25 @@ namespace EcoMeal.Api.Migrations
                     b.Navigation("Business");
 
                     b.Navigation("PackageType");
+                });
+
+            modelBuilder.Entity("EcoMeal.Api.Entities.Review", b =>
+                {
+                    b.HasOne("EcoMeal.Api.Entities.Order", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("EcoMeal.Api.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

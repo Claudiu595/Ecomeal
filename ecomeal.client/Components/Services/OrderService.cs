@@ -1,60 +1,61 @@
-using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text.Json;
 using EcoMeal.Client.Models;
-using EcoMeal.Site.Services;
 
 namespace EcoMeal.Client.Services
 {
     public class OrderService
     {
         private readonly HttpClient _http;
-        private readonly AuthService _authService;
 
-        public OrderService(HttpClient http, AuthService authService)
+        public OrderService(HttpClient http)
         {
             _http = http;
-            _authService = authService;
         }
 
-        private async Task AddAuthHeaderAsync(HttpRequestMessage request)
+        public async Task<OrderResult> PlaceOrderAsync(int packageId)
         {
-            if (string.IsNullOrEmpty(_authService.Token))
+            var response = await _http.PostAsJsonAsync("api/order", new OrderCreateModel { PackageId = packageId });
+            if (response.IsSuccessStatusCode)
             {
-                await _authService.LoadTokenAsync();
+                return OrderResult.Ok();
             }
 
-            if (!string.IsNullOrEmpty(_authService.Token))
-            {
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _authService.Token);
-            }
+            var errorMessage = await ReadErrorMessageAsync(response);
+            return OrderResult.Fail(errorMessage ?? "Comanda nu a putut fi plasată.");
         }
 
-        public async Task<bool> PlaceOrderAsync(int packageId)
+        private static async Task<string?> ReadErrorMessageAsync(HttpResponseMessage response)
         {
-            var request = new HttpRequestMessage(HttpMethod.Post, "api/order")
+            var body = await response.Content.ReadAsStringAsync();
+            if (string.IsNullOrWhiteSpace(body))
             {
-                Content = JsonContent.Create(new { PackageId = packageId })
-            };
-            
-            await AddAuthHeaderAsync(request);
+                return null;
+            }
 
-            var response = await _http.SendAsync(request);
-            return response.IsSuccessStatusCode;
+            // Some error responses are plain text, others are JSON-encoded strings ("message") - handle both.
+            if (body.Length >= 2 && body[0] == '"' && body[^1] == '"')
+            {
+                try
+                {
+                    return JsonSerializer.Deserialize<string>(body) ?? body;
+                }
+                catch (JsonException)
+                {
+                    return body;
+                }
+            }
+
+            return body;
         }
 
         public async Task<List<OrderGetModel>> GetMyOrdersAsync()
         {
-            var request = new HttpRequestMessage(HttpMethod.Get, "api/order/my");
-            await AddAuthHeaderAsync(request);
+            var response = await _http.GetAsync("api/order");
+            response.EnsureSuccessStatusCode();
 
-            var response = await _http.SendAsync(request);
-            if (response.IsSuccessStatusCode)
-            {
-                var orders = await response.Content.ReadFromJsonAsync<List<OrderGetModel>>();
-                return orders ?? new List<OrderGetModel>();
-            }
-            
-            return new List<OrderGetModel>();
+            var orders = await response.Content.ReadFromJsonAsync<List<OrderGetModel>>();
+            return orders ?? new List<OrderGetModel>();
         }
     }
 }

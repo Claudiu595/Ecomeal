@@ -59,7 +59,9 @@ namespace EcoMeal.Api.Controllers
             var order = new Order
             {
                 UserId = userId,
+                User = user,
                 PackageId = package.Id,
+                Package = package,
                 Status = request.PayWithCard ? "Placed" : "Pending",
                 Date = DateTime.UtcNow,
                 TotalAmount = package.Price,
